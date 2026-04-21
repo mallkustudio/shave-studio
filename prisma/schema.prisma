@@ -1,0 +1,163 @@
+// ============================================================
+// Shave Studio Booking System — Prisma Schema
+// ============================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================================
+// Enums
+// ============================================================
+
+enum Role {
+  ADMIN
+  BARBER
+}
+
+enum DayOfWeek {
+  MON
+  TUE
+  WED
+  THU
+  FRI
+  SAT
+  SUN
+}
+
+enum BookingStatus {
+  PENDING_PAYMENT
+  PENDING_REVIEW
+  CONFIRMED
+  REJECTED
+  CANCELLED
+  PAYMENT_EXPIRED
+  NO_SHOW
+}
+
+// ============================================================
+// Models
+// ============================================================
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String?
+  role         Role
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  barber          Barber?
+  manualBookings  Booking[]     @relation("BookingCreatedBy")
+  blockedTimes    BlockedTime[] @relation("BlockedTimeCreatedBy")
+}
+
+model Barber {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  displayName String
+  bio         String?
+  avatarUrl   String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user          User            @relation(fields: [userId], references: [id])
+  services      BarberService[]
+  availability  Availability[]
+  blockedTimes  BlockedTime[]
+  bookings      Booking[]
+}
+
+model Service {
+  id              String   @id @default(cuid())
+  name            String
+  description     String?
+  durationMinutes Int
+  price           Decimal  @db.Decimal(10, 2)
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  barbers   BarberService[]
+  bookings  Booking[]
+}
+
+model BarberService {
+  id          String   @id @default(cuid())
+  barberId    String
+  serviceId   String
+  customPrice Decimal? @db.Decimal(10, 2)
+  isActive    Boolean  @default(true)
+
+  barber  Barber  @relation(fields: [barberId], references: [id])
+  service Service @relation(fields: [serviceId], references: [id])
+
+  @@unique([barberId, serviceId])
+}
+
+model Availability {
+  id        String    @id @default(cuid())
+  barberId  String
+  dayOfWeek DayOfWeek
+  startTime DateTime
+  endTime   DateTime
+  isActive  Boolean   @default(true)
+
+  barber Barber @relation(fields: [barberId], references: [id])
+
+  @@unique([barberId, dayOfWeek])
+}
+
+model BlockedTime {
+  id          String   @id @default(cuid())
+  barberId    String
+  startAt     DateTime
+  endAt       DateTime
+  reason      String?
+  createdById String
+  createdAt   DateTime @default(now())
+
+  barber      Barber @relation(fields: [barberId], references: [id])
+  createdBy   User   @relation("BlockedTimeCreatedBy", fields: [createdById], references: [id])
+}
+
+model Booking {
+  id              String        @id @default(cuid())
+  barberId        String
+  serviceId       String
+  customerName    String
+  customerEmail   String
+  customerPhone   String?
+  startAt         DateTime
+  endAt           DateTime
+  status           BookingStatus @default(PENDING_PAYMENT)
+  notes            String?
+  paymentProofUrl  String?
+  paymentExpiresAt DateTime?
+  reviewedAt       DateTime?
+  createdById      String?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  cancelledAt      DateTime?
+
+  barber     Barber  @relation(fields: [barberId], references: [id])
+  service    Service @relation(fields: [serviceId], references: [id])
+  createdBy  User?   @relation("BookingCreatedBy", fields: [createdById], references: [id])
+
+  @@unique([barberId, startAt])
+}
+
+model BookingSettings {
+  id                   String   @id @default("global")
+  paymentWindowMinutes Int      @default(30)
+  transferAlias        String   @default("")
+  transferHolderName   String   @default("")
+  transferCBUorCVU     String   @default("")
+  updatedAt            DateTime @updatedAt
+}
