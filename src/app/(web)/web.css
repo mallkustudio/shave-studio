@@ -1,0 +1,9 @@
+/* Shave Studio — Web pública styles */
+/* Las variables globales vienen de globals.css */
+
+:root {
+  --color-accent: #e63946;
+  --color-bg: #0a0a0a;
+  --color-text: #ffffff;
+  --font-heading: system-ui, sans-serif;
+}
