@@ -10,16 +10,12 @@ export function WebFooter() {
           </h3>
           <div className="flex flex-col gap-2 text-sm text-zinc-400">
             <div className="flex justify-between gap-4">
-              <span>Mon — Fri</span>
-              <span>09:00 — 19:00</span>
+              <span>Mar — Sáb</span>
+              <span>09:00 — 21:00</span>
             </div>
             <div className="flex justify-between gap-4">
-              <span>Saturday</span>
-              <span>10:00 — 16:00</span>
-            </div>
-            <div className="flex justify-between gap-4">
-              <span>Sunday</span>
-              <span className="text-zinc-600">Closed</span>
+              <span>Dom y Lun</span>
+              <span className="text-zinc-600">Cerrado</span>
             </div>
           </div>
         </div>
@@ -30,10 +26,10 @@ export function WebFooter() {
             Contact
           </h3>
           <div className="flex flex-col gap-1.5 text-sm text-zinc-400">
-            <p>123 Placeholder Street</p>
-            <p>Buenos Aires, Argentina</p>
+            <p>Av. Dorrego 1865 3B</p>
+            <p>Entre Gorriti y Honduras, CABA</p>
             <p className="mt-2">+54 11 0000-0000</p>
-            <p>info@shave-studio.com</p>
+            <p>info@shavesstudio.com</p>
           </div>
         </div>
 
@@ -42,11 +38,30 @@ export function WebFooter() {
           <h3 className="text-xs font-semibold tracking-widest uppercase text-[var(--color-accent)]">
             Keep in Touch
           </h3>
-          <div className="flex gap-3">
-            <div className="w-9 h-9 rounded bg-zinc-800" aria-label="Social placeholder" />
-            <div className="w-9 h-9 rounded bg-zinc-800" aria-label="Social placeholder" />
-            <div className="w-9 h-9 rounded bg-zinc-800" aria-label="Social placeholder" />
-          </div>
+          <a
+            href="https://www.instagram.com/shaves.studio"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Instagram de Shaves Studio"
+            className="w-9 h-9 flex items-center justify-center rounded bg-zinc-800 text-zinc-400 hover:bg-[var(--color-accent)] hover:text-white transition-colors duration-200"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.75"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+              <circle cx="12" cy="12" r="4" />
+              <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none" />
+            </svg>
+          </a>
         </div>
 
       </div>
@@ -55,7 +70,7 @@ export function WebFooter() {
       <div className="border-t border-zinc-800">
         <div className="max-w-6xl mx-auto px-6 py-4">
           <p className="text-xs text-zinc-500 text-center tracking-wide">
-            Copyright © 2026 Shave Studio | All rights reserved.
+            Copyright © 2026 Shaves Studio | All rights reserved.
           </p>
         </div>
       </div>

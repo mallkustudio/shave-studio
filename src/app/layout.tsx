@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Shave Studio",
-  description: "Premium barbershop",
+  title: "Shaves Studio | Peluquería y Afeitado — Palermo, CABA",
+  description: "Peluquería y barbería premium en Palermo. Cortes, barba y afeitado. Turno online disponible.",
 };
 
 export default function RootLayout({
