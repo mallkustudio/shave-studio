@@ -20,7 +20,7 @@ export function HeroSection() {
       />
 
       {/* Content */}
-      <div className="relative z-10 w-full px-[10%] pt-24 pb-20 flex flex-col gap-6">
+      <div className="relative z-10 w-full px-[10%] pt-16 md:pt-24 pb-20 flex flex-col gap-6">
 
         {/* Title */}
         <h1

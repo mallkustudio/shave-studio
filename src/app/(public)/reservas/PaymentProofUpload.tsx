@@ -91,7 +91,7 @@ export function PaymentProofUpload({ bookingId, amount, paymentExpiresAt, transf
     <form onSubmit={handleSubmit} className="flex flex-col gap-6">
 
       {/* Transfer instructions */}
-      <section className="rounded-xl border border-zinc-800 bg-zinc-900 px-5 py-4 flex flex-col gap-3">
+      <section className="rounded-none border border-zinc-800 bg-zinc-900 px-5 py-4 flex flex-col gap-3">
         <h2 className="text-xs uppercase tracking-widest text-zinc-500">Instrucciones de transferencia</h2>
         <div className="grid grid-cols-2 gap-y-2 text-sm">
           {transferInfo.cbuOrCvu && (
@@ -115,13 +115,13 @@ export function PaymentProofUpload({ bookingId, amount, paymentExpiresAt, transf
         </div>
         <div className="border-t border-zinc-800 pt-3 flex items-center justify-between">
           <span className="text-zinc-400 text-sm">Monto</span>
-          <span className="text-amber-400 font-semibold text-base">{formatARS(amount)}</span>
+          <span className="text-[#e63946] font-semibold text-base">{formatARS(amount)}</span>
         </div>
       </section>
 
       {/* Countdown notice */}
       {isExpired ? (
-        <div className="rounded-xl border border-red-500/20 bg-red-500/5 px-5 py-4 flex flex-col gap-1">
+        <div className="rounded-none border border-red-500/20 bg-red-500/5 px-5 py-4 flex flex-col gap-1">
           <p className="text-red-400 text-sm font-medium">El tiempo expiró</p>
           <p className="text-zinc-400 text-xs">
             El horario fue liberado. Para reservarlo nuevamente iniciá una nueva reserva.
@@ -129,14 +129,14 @@ export function PaymentProofUpload({ bookingId, amount, paymentExpiresAt, transf
         </div>
       ) : (
         <div
-          className={`rounded-xl border px-5 py-3 flex items-center justify-between gap-4 transition-colors duration-500
+          className={`rounded-none border px-5 py-3 flex items-center justify-between gap-4 transition-colors duration-500
             ${isUrgent
               ? "border-red-500/30 bg-red-500/5"
-              : "border-amber-500/20 bg-amber-500/5"
+              : "border-[#e63946]/20 bg-[#e63946]/5"
             }`}
         >
           <div className="flex flex-col gap-0.5">
-            <p className={`text-sm font-medium ${isUrgent ? "text-red-400" : "text-amber-400"}`}>
+            <p className={`text-sm font-medium ${isUrgent ? "text-red-400" : "text-[#e63946]"}`}>
               Tu horario está reservado
             </p>
             <p className="text-zinc-400 text-xs">
@@ -146,7 +146,7 @@ export function PaymentProofUpload({ bookingId, amount, paymentExpiresAt, transf
           <div className="shrink-0 flex flex-col items-center">
             <span
               className={`text-2xl font-mono font-semibold tabular-nums leading-none
-                ${isUrgent ? "text-red-400" : "text-amber-400"}`}
+                ${isUrgent ? "text-red-400" : "text-[#e63946]"}`}
             >
               {formatCountdown(secondsLeft)}
             </span>
@@ -160,7 +160,7 @@ export function PaymentProofUpload({ bookingId, amount, paymentExpiresAt, transf
         <h2 className="text-xs uppercase tracking-widest text-zinc-500">Comprobante de pago</h2>
         <div
           onClick={() => !isExpired && inputRef.current?.click()}
-          className={`rounded-xl border border-dashed px-5 py-6 flex flex-col items-center gap-2 transition-colors
+          className={`rounded-none border border-dashed px-5 py-6 flex flex-col items-center gap-2 transition-colors
             ${isExpired
               ? "border-zinc-800 bg-zinc-900/50 cursor-not-allowed opacity-50"
               : "border-zinc-700 bg-zinc-900 cursor-pointer hover:border-zinc-500"
@@ -193,10 +193,10 @@ export function PaymentProofUpload({ bookingId, amount, paymentExpiresAt, transf
         type="submit"
         disabled={!file || loading || isExpired}
         className={`
-          w-full py-3.5 rounded-xl text-sm font-semibold tracking-wide transition-all duration-150
+          w-full py-3.5 rounded-none text-sm font-semibold tracking-wide transition-colors duration-200
           ${!file || loading || isExpired
             ? "bg-zinc-800 text-zinc-600 cursor-not-allowed"
-            : "bg-amber-500 text-zinc-950 hover:bg-amber-400"
+            : "border border-white text-white bg-transparent hover:bg-white hover:text-black"
           }
         `}
       >

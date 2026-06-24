@@ -40,11 +40,11 @@ type FieldErrors = {
 
 function inputClass(hasError: boolean): string {
   return [
-    "bg-zinc-900 border rounded-xl px-4 py-3 text-sm text-zinc-100",
+    "bg-zinc-900 border rounded-none px-4 py-3 text-sm text-zinc-100",
     "placeholder:text-zinc-600 focus:outline-none transition-colors",
     hasError
       ? "border-red-500/60 focus:border-red-400"
-      : "border-zinc-800 focus:border-amber-500",
+      : "border-zinc-800 focus:border-[#e63946]",
   ].join(" ");
 }
 
@@ -143,7 +143,7 @@ export function BookingForm({
       </button>
 
       {/* Summary */}
-      <section className="rounded-xl border border-zinc-800 bg-zinc-900 px-5 py-4 text-sm">
+      <section className="rounded-none border border-zinc-800 bg-zinc-900 px-5 py-4 text-sm">
         <h2 className="text-xs uppercase tracking-widest text-zinc-500 mb-3">Tu reserva</h2>
         <div className="grid grid-cols-2 gap-y-2">
           <span className="text-zinc-400">Barbero</span>
@@ -212,10 +212,10 @@ export function BookingForm({
         type="submit"
         disabled={loading}
         className={`
-          w-full py-3.5 rounded-xl text-sm font-semibold tracking-wide transition-all duration-150
+          w-full py-3.5 rounded-none text-sm font-semibold tracking-wide transition-colors duration-200
           ${loading
             ? "bg-zinc-800 text-zinc-600 cursor-not-allowed"
-            : "bg-amber-500 text-zinc-950 hover:bg-amber-400"
+            : "border border-white text-white bg-transparent hover:bg-white hover:text-black"
           }
         `}
       >

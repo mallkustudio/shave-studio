@@ -1,7 +1,13 @@
+import { AboutHero } from "@/components/web/about/AboutHero";
+import { WhoWeAre } from "@/components/web/about/WhoWeAre";
+import { AboutServices } from "@/components/web/about/AboutServices";
+
 export default function AboutPage() {
   return (
-    <main className="min-h-screen bg-[var(--color-bg)] text-white flex items-center justify-center pt-16">
-      <p className="text-zinc-600 tracking-widest text-sm uppercase">ABOUT</p>
+    <main>
+      <AboutHero />
+      <WhoWeAre />
+      <AboutServices />
     </main>
   );
 }

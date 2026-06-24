@@ -88,16 +88,16 @@ export function DateTimePicker({ barberId, durationMinutes, availableDays, onBac
                 disabled={!available}
                 onClick={() => handleDateSelect(iso)}
                 className={`
-                  shrink-0 flex flex-col items-center justify-center rounded-xl w-14 h-16 border text-sm transition-all duration-150
+                  shrink-0 flex flex-col items-center justify-center rounded-none w-14 h-16 border text-sm transition-all duration-150
                   ${isSelected
-                    ? "border-amber-500 bg-zinc-800 text-zinc-100"
+                    ? "border-[#e63946] bg-zinc-800 text-zinc-100"
                     : available
                       ? "border-zinc-800 bg-zinc-900 text-zinc-100 hover:border-zinc-600"
                       : "border-zinc-800 bg-zinc-900 text-zinc-600 cursor-not-allowed"
                   }
                 `}
               >
-                <span className={`text-xs ${isSelected ? "text-amber-500" : "text-zinc-500"}`}>
+                <span className={`text-xs ${isSelected ? "text-[#e63946]" : "text-zinc-500"}`}>
                   {label}
                 </span>
                 <span className="font-semibold mt-0.5">{dayNum}</span>
@@ -129,9 +129,9 @@ export function DateTimePicker({ barberId, durationMinutes, availableDays, onBac
                     key={slot}
                     onClick={() => setSelectedSlot(slot)}
                     className={`
-                      py-3 rounded-xl border text-sm font-medium transition-all duration-150
+                      py-3 rounded-none border text-sm font-medium transition-all duration-150
                       ${isSelected
-                        ? "border-amber-500 bg-zinc-800 text-amber-400"
+                        ? "border-[#e63946] bg-zinc-800 text-[#e63946]"
                         : "border-zinc-800 bg-zinc-900 text-zinc-100 hover:border-zinc-600"
                       }
                     `}
@@ -151,9 +151,9 @@ export function DateTimePicker({ barberId, durationMinutes, availableDays, onBac
           disabled={!canContinue}
           onClick={() => canContinue && onSelect(selectedDate!, selectedSlot!)}
           className={`
-            w-full py-3.5 rounded-xl text-sm font-semibold tracking-wide transition-all duration-150
+            w-full py-3.5 rounded-none text-sm font-semibold tracking-wide transition-colors duration-200
             ${canContinue
-              ? "bg-amber-500 text-zinc-950 hover:bg-amber-400"
+              ? "border border-white text-white bg-transparent hover:bg-white hover:text-black"
               : "bg-zinc-800 text-zinc-600 cursor-not-allowed"
             }
           `}

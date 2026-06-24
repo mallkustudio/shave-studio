@@ -9,7 +9,7 @@ const NAV_LINKS = [
   { href: "/about", label: "ABOUT" },
   { href: "/barbers", label: "BARBERS" },
   { href: "/gallery", label: "GALLERY" },
-  { href: "/contact", label: "CONTACT" },
+  { href: "/reservas", label: "RESERVAR" },
 ];
 
 export function WebNav() {
@@ -23,39 +23,48 @@ export function WebNav() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  const linkClass = (href: string) => {
+    const isActive = href === "/" ? pathname === "/" : pathname.startsWith(href);
+    return `font-medium tracking-wide uppercase transition-colors duration-150 ${
+      isActive ? "text-[var(--color-accent)]" : "text-white hover:text-[var(--color-accent)]"
+    }`;
+  };
+
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-sm transition-colors duration-300 ${
-        scrolled ? "bg-black/80" : "bg-transparent"
+      className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${
+        scrolled ? "bg-black/80 backdrop-blur-sm" : "bg-transparent"
       }`}
     >
-      <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-        <Link
-          href="/"
-          className="text-white text-sm font-bold tracking-widest uppercase"
-        >
+      {/* Mobile: two rows */}
+      <div className="flex md:hidden flex-col items-center py-2 px-4 gap-1">
+        <Link href="/" className="text-white text-sm font-bold tracking-widest uppercase">
           SHAVE STUDIO
         </Link>
+        <ul className="flex items-center gap-3">
+          {NAV_LINKS.map(({ href, label }) => (
+            <li key={href}>
+              <Link href={href} className={`text-[10px] ${linkClass(href)}`}>
+                {label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
 
+      {/* Desktop: single row */}
+      <div className="hidden md:flex max-w-6xl mx-auto px-6 h-16 items-center justify-between">
+        <Link href="/" className="text-white text-sm font-bold tracking-widest uppercase">
+          SHAVE STUDIO
+        </Link>
         <ul className="flex items-center gap-8">
-          {NAV_LINKS.map(({ href, label }) => {
-            const isActive =
-              href === "/" ? pathname === "/" : pathname.startsWith(href);
-            return (
-              <li key={href}>
-                <Link
-                  href={href}
-                  className={`text-xs font-medium tracking-widest uppercase transition-colors duration-150 ${
-                    isActive
-                      ? "text-[var(--color-accent)]"
-                      : "text-white hover:text-[var(--color-accent)]"
-                  }`}
-                >
-                  {label}
-                </Link>
-              </li>
-            );
-          })}
+          {NAV_LINKS.map(({ href, label }) => (
+            <li key={href}>
+              <Link href={href} className={`text-xs ${linkClass(href)}`}>
+                {label}
+              </Link>
+            </li>
+          ))}
         </ul>
       </div>
     </nav>
