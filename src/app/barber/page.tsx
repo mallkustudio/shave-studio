@@ -1,16 +1,11 @@
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getUpcomingBookingsForBarber, type UpcomingBooking } from "@/modules/bookings/queries";
 import { formatARTTime, formatARTDateLabel, toARTDateKey } from "@/lib/tz";
 import { formatARS } from "@/lib/money";
 import { BookingCard } from "./BookingCard";
 import { ManualBookingForm } from "./ManualBookingForm";
-
-// Temporary: fixed barber for development. Replace with session lookup when auth is added.
-const DEV_BARBER_EMAIL = "carlos@shave-studio.com";
-
-type Props = {
-  searchParams: Promise<{ barberEmail?: string }>;
-};
 
 function groupByDate(
   bookings: UpcomingBooking[]
@@ -30,12 +25,16 @@ function groupByDate(
     .map(([key, value]) => ({ key, ...value }));
 }
 
-export default async function BarberPage({ searchParams }: Props) {
-  const params = await searchParams;
-  const email = params.barberEmail ?? DEV_BARBER_EMAIL;
+export default async function BarberPage() {
+  const session = await auth();
+  const barberEmail = session?.user?.email;
+
+  if (!barberEmail) {
+    redirect("/login");
+  }
 
   const user = await prisma.user.findUnique({
-    where: { email },
+    where: { email: barberEmail },
     select: { barber: { select: { id: true, displayName: true } } },
   });
 

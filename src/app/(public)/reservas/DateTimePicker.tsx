@@ -77,7 +77,7 @@ export function DateTimePicker({ barberId, durationMinutes, availableDays, onBac
 
       {/* Step 3 — Date selection */}
       <section className="flex flex-col gap-3">
-        <h2 className="text-xs uppercase tracking-widest text-zinc-500">3. Elige el día</h2>
+        <h2 className="text-xs uppercase tracking-widest text-zinc-400">3. Elige el día</h2>
         <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
           {dateStrip.map(({ iso, label, date, available }) => {
             const isSelected = iso === selectedDate;
@@ -88,12 +88,12 @@ export function DateTimePicker({ barberId, durationMinutes, availableDays, onBac
                 disabled={!available}
                 onClick={() => handleDateSelect(iso)}
                 className={`
-                  shrink-0 flex flex-col items-center justify-center rounded-none w-14 h-16 border text-sm transition-all duration-150
+                  shrink-0 flex flex-col items-center justify-center rounded-none w-14 h-16 border text-sm transition-all duration-150 backdrop-blur-sm
                   ${isSelected
-                    ? "border-[#e63946] bg-zinc-800 text-zinc-100"
+                    ? "border-[#e63946] bg-black/40 text-[#e63946]"
                     : available
-                      ? "border-zinc-800 bg-zinc-900 text-zinc-100 hover:border-zinc-600"
-                      : "border-zinc-800 bg-zinc-900 text-zinc-600 cursor-not-allowed"
+                      ? "border-zinc-700 bg-black/40 text-zinc-300 hover:border-zinc-400"
+                      : "border-zinc-800 bg-black/40 text-zinc-600 cursor-not-allowed"
                   }
                 `}
               >
@@ -110,7 +110,7 @@ export function DateTimePicker({ barberId, durationMinutes, availableDays, onBac
       {/* Step 4 — Time slot selection */}
       {selectedDate && (
         <section className="flex flex-col gap-3">
-          <h2 className="text-xs uppercase tracking-widest text-zinc-500">4. Elige la hora</h2>
+          <h2 className="text-xs uppercase tracking-widest text-zinc-400">4. Elige la hora</h2>
 
           {loading && (
             <p className="text-zinc-500 text-sm">Cargando horarios...</p>
@@ -129,10 +129,10 @@ export function DateTimePicker({ barberId, durationMinutes, availableDays, onBac
                     key={slot}
                     onClick={() => setSelectedSlot(slot)}
                     className={`
-                      py-3 rounded-none border text-sm font-medium transition-all duration-150
+                      py-3 rounded-none border text-sm font-medium transition-all duration-150 backdrop-blur-sm
                       ${isSelected
-                        ? "border-[#e63946] bg-zinc-800 text-[#e63946]"
-                        : "border-zinc-800 bg-zinc-900 text-zinc-100 hover:border-zinc-600"
+                        ? "border-[#e63946] bg-[#e63946]/10 text-[#e63946]"
+                        : "border-zinc-700 bg-black/40 text-zinc-300 hover:border-zinc-400"
                       }
                     `}
                   >
@@ -151,7 +151,7 @@ export function DateTimePicker({ barberId, durationMinutes, availableDays, onBac
           disabled={!canContinue}
           onClick={() => canContinue && onSelect(selectedDate!, selectedSlot!)}
           className={`
-            w-full py-3.5 rounded-none text-sm font-semibold tracking-wide transition-colors duration-200
+            w-full py-4 rounded-none text-sm font-semibold uppercase tracking-widest transition-colors duration-200
             ${canContinue
               ? "border border-white text-white bg-transparent hover:bg-white hover:text-black"
               : "bg-zinc-800 text-zinc-600 cursor-not-allowed"

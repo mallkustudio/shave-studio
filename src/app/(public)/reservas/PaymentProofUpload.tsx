@@ -91,29 +91,29 @@ export function PaymentProofUpload({ bookingId, amount, paymentExpiresAt, transf
     <form onSubmit={handleSubmit} className="flex flex-col gap-6">
 
       {/* Transfer instructions */}
-      <section className="rounded-none border border-zinc-800 bg-zinc-900 px-5 py-4 flex flex-col gap-3">
-        <h2 className="text-xs uppercase tracking-widest text-zinc-500">Instrucciones de transferencia</h2>
+      <section className="rounded-none border border-zinc-700 bg-black/40 backdrop-blur-sm px-5 py-4 flex flex-col gap-3">
+        <h2 className="text-xs uppercase tracking-widest text-zinc-400">Instrucciones de transferencia</h2>
         <div className="grid grid-cols-2 gap-y-2 text-sm">
           {transferInfo.cbuOrCvu && (
             <>
               <span className="text-zinc-400">CBU / CVU</span>
-              <span className="text-zinc-100 font-mono text-xs break-all">{transferInfo.cbuOrCvu}</span>
+              <span className="text-zinc-300 font-mono text-xs break-all">{transferInfo.cbuOrCvu}</span>
             </>
           )}
           {transferInfo.alias && (
             <>
               <span className="text-zinc-400">Alias</span>
-              <span className="text-zinc-100">{transferInfo.alias}</span>
+              <span className="text-zinc-300">{transferInfo.alias}</span>
             </>
           )}
           {transferInfo.holderName && (
             <>
               <span className="text-zinc-400">Titular</span>
-              <span className="text-zinc-100">{transferInfo.holderName}</span>
+              <span className="text-zinc-300">{transferInfo.holderName}</span>
             </>
           )}
         </div>
-        <div className="border-t border-zinc-800 pt-3 flex items-center justify-between">
+        <div className="border-t border-zinc-700 pt-3 flex items-center justify-between">
           <span className="text-zinc-400 text-sm">Monto</span>
           <span className="text-[#e63946] font-semibold text-base">{formatARS(amount)}</span>
         </div>
@@ -157,13 +157,13 @@ export function PaymentProofUpload({ bookingId, amount, paymentExpiresAt, transf
 
       {/* File upload */}
       <section className="flex flex-col gap-2">
-        <h2 className="text-xs uppercase tracking-widest text-zinc-500">Comprobante de pago</h2>
+        <h2 className="text-xs uppercase tracking-widest text-zinc-400">Comprobante de pago</h2>
         <div
           onClick={() => !isExpired && inputRef.current?.click()}
-          className={`rounded-none border border-dashed px-5 py-6 flex flex-col items-center gap-2 transition-colors
+          className={`rounded-none border-2 border-dashed px-5 py-6 flex flex-col items-center gap-2 transition-colors
             ${isExpired
-              ? "border-zinc-800 bg-zinc-900/50 cursor-not-allowed opacity-50"
-              : "border-zinc-700 bg-zinc-900 cursor-pointer hover:border-zinc-500"
+              ? "border-zinc-800 bg-black/30 cursor-not-allowed opacity-50"
+              : "border-zinc-600 bg-black/30 cursor-pointer hover:border-white"
             }`}
         >
           {file ? (
@@ -193,7 +193,7 @@ export function PaymentProofUpload({ bookingId, amount, paymentExpiresAt, transf
         type="submit"
         disabled={!file || loading || isExpired}
         className={`
-          w-full py-3.5 rounded-none text-sm font-semibold tracking-wide transition-colors duration-200
+          w-full py-4 rounded-none text-sm font-semibold uppercase tracking-widest transition-colors duration-200
           ${!file || loading || isExpired
             ? "bg-zinc-800 text-zinc-600 cursor-not-allowed"
             : "border border-white text-white bg-transparent hover:bg-white hover:text-black"

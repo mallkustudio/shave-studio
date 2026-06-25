@@ -2,6 +2,7 @@ import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
+import bcrypt from "bcryptjs";
 
 if (!process.env.DATABASE_URL) {
   throw new Error("DATABASE_URL is not defined");
@@ -18,58 +19,67 @@ function timeOnly(hours: number, minutes = 0): Date {
 }
 
 async function main() {
+  // ── Password hashes ────────────────────────────────────────────────────────
+
+  const adminHash = await bcrypt.hash("admin2024", 10);
+  const amadoHash = await bcrypt.hash("amado2024", 10);
+  const lucasHash = await bcrypt.hash("lucas2024", 10);
+
   // ── Users ─────────────────────────────────────────────────────────────────
 
   await prisma.user.upsert({
     where: { email: "admin@shave-studio.com" },
-    update: {},
+    update: { passwordHash: adminHash, name: "Admin" },
     create: {
       name: "Admin",
       email: "admin@shave-studio.com",
       role: "ADMIN",
+      passwordHash: adminHash,
     },
   });
 
-  const userCarlos = await prisma.user.upsert({
-    where: { email: "carlos@shave-studio.com" },
-    update: {},
+  const userAmado = await prisma.user.upsert({
+    where: { email: "amado@shave-studio.com" },
+    update: { passwordHash: amadoHash, name: "Amado Cáceres" },
     create: {
-      name: "Carlos Méndez",
-      email: "carlos@shave-studio.com",
-      role: "BARBER",
+      name: "Amado Cáceres",
+      email: "amado@shave-studio.com",
+      role: "ADMIN",
+      passwordHash: amadoHash,
     },
   });
 
-  const userAndres = await prisma.user.upsert({
-    where: { email: "andres@shave-studio.com" },
-    update: {},
+  const userLucas = await prisma.user.upsert({
+    where: { email: "lucas@shave-studio.com" },
+    update: { passwordHash: lucasHash, name: "Lucas Frenchi" },
     create: {
-      name: "Andrés Torres",
-      email: "andres@shave-studio.com",
-      role: "BARBER",
+      name: "Lucas Frenchi",
+      email: "lucas@shave-studio.com",
+      role: "ADMIN",
+      passwordHash: lucasHash,
     },
   });
 
   // ── Barbers ───────────────────────────────────────────────────────────────
 
-  const barberCarlos = await prisma.barber.upsert({
-    where: { userId: userCarlos.id },
-    update: {},
+  const barberAmado = await prisma.barber.upsert({
+    where: { userId: userAmado.id },
+    update: { displayName: "Amado Cáceres" },
     create: {
-      userId: userCarlos.id,
-      displayName: "Carlos Méndez",
+      userId: userAmado.id,
+      displayName: "Amado Cáceres",
       bio: "15 años perfeccionando el arte del afeitado clásico y los cortes de precisión.",
       avatarUrl: null,
       isActive: true,
     },
   });
 
-  const barberAndres = await prisma.barber.upsert({
-    where: { userId: userAndres.id },
-    update: {},
+  const barberLucas = await prisma.barber.upsert({
+    where: { userId: userLucas.id },
+    update: { displayName: "Lucas Frenchi" },
     create: {
-      userId: userAndres.id,
-      displayName: "Andrés Torres",
+      userId: userLucas.id,
+      displayName: "Lucas Frenchi",
       bio: "Especialista en cortes modernos, degradados y diseño de barba.",
       avatarUrl: null,
       isActive: true,
@@ -131,15 +141,15 @@ async function main() {
   // ── Barber–Service assignments ────────────────────────────────────────────
 
   const assignments: { barberId: string; serviceId: string; customPrice?: number }[] = [
-    // Carlos: all four services, no custom prices
-    { barberId: barberCarlos.id, serviceId: services["corte-clasico"].id },
-    { barberId: barberCarlos.id, serviceId: services["afeitado-navaja"].id },
-    { barberId: barberCarlos.id, serviceId: services["corte-barba"].id },
-    { barberId: barberCarlos.id, serviceId: services["tratamiento-barba"].id },
-    // Andrés: three services, custom price on Corte y Barba
-    { barberId: barberAndres.id, serviceId: services["corte-clasico"].id },
-    { barberId: barberAndres.id, serviceId: services["corte-barba"].id, customPrice: 28 },
-    { barberId: barberAndres.id, serviceId: services["tratamiento-barba"].id },
+    // Amado: all four services, no custom prices
+    { barberId: barberAmado.id, serviceId: services["corte-clasico"].id },
+    { barberId: barberAmado.id, serviceId: services["afeitado-navaja"].id },
+    { barberId: barberAmado.id, serviceId: services["corte-barba"].id },
+    { barberId: barberAmado.id, serviceId: services["tratamiento-barba"].id },
+    // Lucas: three services, custom price on Corte y Barba
+    { barberId: barberLucas.id, serviceId: services["corte-clasico"].id },
+    { barberId: barberLucas.id, serviceId: services["corte-barba"].id, customPrice: 28 },
+    { barberId: barberLucas.id, serviceId: services["tratamiento-barba"].id },
   ];
 
   for (const a of assignments) {
@@ -159,7 +169,7 @@ async function main() {
   // Mon–Fri: 09:00–19:00 | Sat: 10:00–16:00 | Sun: closed
 
   const weekdays = ["MON", "TUE", "WED", "THU", "FRI"] as const;
-  const allBarbers = [barberCarlos.id, barberAndres.id];
+  const allBarbers = [barberAmado.id, barberLucas.id];
 
   for (const barberId of allBarbers) {
     for (const day of weekdays) {
@@ -190,8 +200,8 @@ async function main() {
   }
 
   console.log("Seed complete");
-  console.log("  Users:        admin@shave-studio.com (ADMIN), carlos@shave-studio.com (BARBER), andres@shave-studio.com (BARBER)");
-  console.log(`  Barbers:      ${barberCarlos.displayName}, ${barberAndres.displayName}`);
+  console.log("  Users:        admin@shave-studio.com (ADMIN), amado@shave-studio.com (BARBER), lucas@shave-studio.com (BARBER)");
+  console.log(`  Barbers:      ${barberAmado.displayName}, ${barberLucas.displayName}`);
   console.log(`  Services:     ${serviceDefinitions.map((s) => s.name).join(", ")}`);
   console.log("  Availability: Mon–Fri 09:00–19:00 | Sat 10:00–16:00");
 }

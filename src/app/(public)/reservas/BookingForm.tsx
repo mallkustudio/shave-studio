@@ -40,11 +40,11 @@ type FieldErrors = {
 
 function inputClass(hasError: boolean): string {
   return [
-    "bg-zinc-900 border rounded-none px-4 py-3 text-sm text-zinc-100",
-    "placeholder:text-zinc-600 focus:outline-none transition-colors",
+    "bg-black/40 backdrop-blur-sm border rounded-none px-4 py-3 text-sm text-white w-full",
+    "placeholder:text-zinc-500 focus:outline-none transition-colors",
     hasError
       ? "border-red-500/60 focus:border-red-400"
-      : "border-zinc-800 focus:border-[#e63946]",
+      : "border-zinc-700 focus:border-white",
   ].join(" ");
 }
 
@@ -143,26 +143,26 @@ export function BookingForm({
       </button>
 
       {/* Summary */}
-      <section className="rounded-none border border-zinc-800 bg-zinc-900 px-5 py-4 text-sm">
-        <h2 className="text-xs uppercase tracking-widest text-zinc-500 mb-3">Tu reserva</h2>
+      <section className="rounded-none border border-zinc-700 bg-black/40 backdrop-blur-sm px-5 py-4 text-sm">
+        <h2 className="text-xs uppercase tracking-widest text-zinc-400 mb-3">Tu reserva</h2>
         <div className="grid grid-cols-2 gap-y-2">
           <span className="text-zinc-400">Barbero</span>
-          <span className="text-zinc-100">{barberName}</span>
+          <span className="text-zinc-300">{barberName}</span>
           <span className="text-zinc-400">Servicio</span>
-          <span className="text-zinc-100">{serviceName}</span>
+          <span className="text-zinc-300">{serviceName}</span>
           <span className="text-zinc-400">Fecha</span>
-          <span className="text-zinc-100">{formatDate(date)}</span>
+          <span className="text-zinc-300">{formatDate(date)}</span>
           <span className="text-zinc-400">Hora</span>
-          <span className="text-zinc-100">{slot} hs</span>
+          <span className="text-zinc-300">{slot} hs</span>
         </div>
       </section>
 
       {/* Fields */}
       <section className="flex flex-col gap-4">
-        <h2 className="text-xs uppercase tracking-widest text-zinc-500">5. Tus datos</h2>
+        <h2 className="text-xs uppercase tracking-widest text-zinc-400">5. Tus datos</h2>
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs text-zinc-400">Nombre completo *</label>
+          <label className="text-xs text-zinc-400 uppercase tracking-widest mb-1">Nombre completo *</label>
           <input
             type="text"
             value={fullName}
@@ -176,7 +176,7 @@ export function BookingForm({
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs text-zinc-400">Email *</label>
+          <label className="text-xs text-zinc-400 uppercase tracking-widest mb-1">Email *</label>
           <input
             type="email"
             value={email}
@@ -190,7 +190,7 @@ export function BookingForm({
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs text-zinc-400">Teléfono *</label>
+          <label className="text-xs text-zinc-400 uppercase tracking-widest mb-1">Teléfono *</label>
           <input
             type="tel"
             value={phone}
@@ -212,7 +212,7 @@ export function BookingForm({
         type="submit"
         disabled={loading}
         className={`
-          w-full py-3.5 rounded-none text-sm font-semibold tracking-wide transition-colors duration-200
+          w-full py-4 rounded-none text-sm font-semibold uppercase tracking-widest transition-colors duration-200
           ${loading
             ? "bg-zinc-800 text-zinc-600 cursor-not-allowed"
             : "border border-white text-white bg-transparent hover:bg-white hover:text-black"

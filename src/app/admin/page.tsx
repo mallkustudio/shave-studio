@@ -1,3 +1,5 @@
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 import { getAllUpcomingBookings, type AdminUpcomingBooking } from "@/modules/bookings/queries";
 import { getSettings } from "@/modules/settings/queries";
 import { formatARTTime, formatARTDateLabel, toARTDateKey } from "@/lib/tz";
@@ -23,19 +25,10 @@ function groupByDate(
     .map(([key, value]) => ({ key, ...value }));
 }
 
-type Props = {
-  searchParams: Promise<{ admin?: string }>;
-};
-
-export default async function AdminPage({ searchParams }: Props) {
-  const params = await searchParams;
-
-  if (params.admin !== "true") {
-    return (
-      <div className="min-h-screen bg-zinc-950 text-zinc-500 flex items-center justify-center text-sm">
-        Acceso restringido.
-      </div>
-    );
+export default async function AdminPage() {
+  const session = await auth();
+  if (!session || (session.user as any).role !== "ADMIN") {
+    redirect("/login");
   }
 
   const [bookings, settings] = await Promise.all([

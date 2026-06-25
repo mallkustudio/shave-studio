@@ -37,14 +37,14 @@ export function BarberServicePicker({ barbers, transferInfo, initialBarberId = n
   const canContinue = selectedBarberId !== null && selectedServiceId !== null;
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100 px-4 py-10 flex flex-col items-center">
+    <div className="min-h-screen text-zinc-100 px-4 py-10 flex flex-col items-center">
       <div className="w-full max-w-xl flex flex-col gap-10">
 
         {/* Header */}
         <div className="text-center">
-          <p className="text-[#e63946] text-xs uppercase tracking-widest mb-2">Shave Studio</p>
-          <h1 className="text-2xl font-bold tracking-widest uppercase">Reserva tu cita</h1>
-          <p className="text-zinc-400 text-sm mt-1">
+          <p className="text-[#e63946] text-xs uppercase tracking-widest mb-2">SHAVE STUDIO</p>
+          <h1 className="text-3xl font-black tracking-widest uppercase">Reserva tu turno</h1>
+          <p className="text-zinc-400 text-sm mt-1 tracking-wide">
             {step === "selection" && "Elige tu barbero y el servicio"}
             {step === "datetime" && "Elige el día y la hora"}
             {step === "confirm" && "Confirmá tu reserva"}
@@ -57,8 +57,8 @@ export function BarberServicePicker({ barbers, transferInfo, initialBarberId = n
           <>
             {/* Step 1 — Barber selection */}
             <section className="flex flex-col gap-3">
-              <h2 className="text-xs uppercase tracking-widest text-zinc-500">
-                1. Elige tu barbero
+              <h2 className="text-xs uppercase tracking-widest text-zinc-400">
+                1. ELIGE TU BARBERO
               </h2>
               <div className="flex flex-col gap-3">
                 {barbers.map((barber) => {
@@ -68,16 +68,16 @@ export function BarberServicePicker({ barbers, transferInfo, initialBarberId = n
                       key={barber.id}
                       onClick={() => handleSelectBarber(barber.id)}
                       className={`
-                        w-full text-left rounded-none border px-5 py-4 transition-all duration-150
+                        w-full text-left rounded-none border px-5 py-4 transition-all duration-150 backdrop-blur-sm
                         ${isSelected
-                          ? "border-[#e63946] bg-zinc-800"
-                          : "border-zinc-800 bg-zinc-900 hover:border-zinc-600"
+                          ? "border-[#e63946] bg-black/40"
+                          : "border-zinc-700 bg-black/40 hover:border-zinc-400"
                         }
                       `}
                     >
                       <div className="flex items-center justify-between gap-4">
                         <div>
-                          <p className="font-medium text-zinc-100">{barber.displayName}</p>
+                          <p className="font-bold text-white uppercase">{barber.displayName}</p>
                           {barber.bio && (
                             <p className="text-zinc-400 text-sm mt-0.5 leading-snug">{barber.bio}</p>
                           )}
@@ -98,8 +98,8 @@ export function BarberServicePicker({ barbers, transferInfo, initialBarberId = n
             {/* Step 2 — Service selection */}
             {selectedBarber && (
               <section className="flex flex-col gap-3">
-                <h2 className="text-xs uppercase tracking-widest text-zinc-500">
-                  2. Elige el servicio
+                <h2 className="text-xs uppercase tracking-widest text-zinc-400">
+                  2. ELIGE EL SERVICIO
                 </h2>
                 <div className="flex flex-col gap-3">
                   {selectedBarber.services.map((service) => {
@@ -109,16 +109,16 @@ export function BarberServicePicker({ barbers, transferInfo, initialBarberId = n
                         key={service.id}
                         onClick={() => setSelectedServiceId(service.id)}
                         className={`
-                          w-full text-left rounded-none border px-5 py-4 transition-all duration-150
+                          w-full text-left rounded-none border px-5 py-4 transition-all duration-150 backdrop-blur-sm
                           ${isSelected
-                            ? "border-[#e63946] bg-zinc-800"
-                            : "border-zinc-800 bg-zinc-900 hover:border-zinc-600"
+                            ? "border-[#e63946] bg-black/40"
+                            : "border-zinc-700 bg-black/40 hover:border-zinc-400"
                           }
                         `}
                       >
                         <div className="flex items-center justify-between gap-4">
                           <div>
-                            <p className="font-medium text-zinc-100">{service.name}</p>
+                            <p className="font-bold text-white uppercase">{service.name}</p>
                             <p className="text-zinc-400 text-sm mt-0.5">{service.durationMinutes} min</p>
                           </div>
                           <div className="flex items-center gap-3 shrink-0">
@@ -144,7 +144,7 @@ export function BarberServicePicker({ barbers, transferInfo, initialBarberId = n
                 disabled={!canContinue}
                 onClick={() => canContinue && setStep("datetime")}
                 className={`
-                  w-full py-3.5 rounded-none text-sm font-semibold tracking-wide transition-colors duration-200
+                  w-full py-4 rounded-none text-sm font-semibold uppercase tracking-widest transition-colors duration-200
                   ${canContinue
                     ? "border border-white text-white bg-transparent hover:bg-white hover:text-black"
                     : "bg-zinc-800 text-zinc-600 cursor-not-allowed"
@@ -203,8 +203,8 @@ export function BarberServicePicker({ barbers, transferInfo, initialBarberId = n
             </div>
 
             {/* Summary */}
-            <div className="rounded-none border border-zinc-800 bg-zinc-900 px-5 py-4 text-sm w-full text-left">
-              <h3 className="text-xs uppercase tracking-widest text-zinc-500 mb-3">Detalle</h3>
+            <div className="rounded-none border border-zinc-700 bg-black/40 backdrop-blur-sm px-5 py-4 text-sm w-full text-left">
+              <h3 className="text-xs uppercase tracking-widest text-zinc-400 mb-3">Detalle</h3>
               <div className="grid grid-cols-2 gap-y-2.5">
                 <span className="text-zinc-400">Barbero</span>
                 <span className="text-zinc-100">{selectedBarber.displayName}</span>
@@ -231,7 +231,7 @@ export function BarberServicePicker({ barbers, transferInfo, initialBarberId = n
                   setPaymentExpiresAt(null);
                   setStep("selection");
                 }}
-                className="w-full py-3.5 rounded-none text-sm font-semibold tracking-wide border border-white text-white bg-transparent hover:bg-white hover:text-black transition-colors duration-200"
+                className="w-full py-4 rounded-none text-sm font-semibold uppercase tracking-widest border border-white text-white bg-transparent hover:bg-white hover:text-black transition-colors duration-200"
               >
                 Volver al inicio
               </button>
@@ -245,7 +245,7 @@ export function BarberServicePicker({ barbers, transferInfo, initialBarberId = n
                   setPaymentExpiresAt(null);
                   setStep("selection");
                 }}
-                className="w-full py-3.5 rounded-none text-sm font-semibold tracking-wide border border-zinc-800 text-zinc-400 hover:text-zinc-200 hover:border-zinc-600 transition-all duration-150"
+                className="w-full py-4 rounded-none text-sm font-semibold uppercase tracking-widest border border-zinc-700 text-zinc-400 hover:text-zinc-200 hover:border-zinc-500 transition-all duration-150"
               >
                 Hacer otra reserva
               </button>
@@ -257,7 +257,7 @@ export function BarberServicePicker({ barbers, transferInfo, initialBarberId = n
         {step === "datetime" && selectedBarber && selectedService && (
           <>
             {/* Selection summary */}
-            <div className="flex items-center justify-between rounded-none border border-zinc-800 bg-zinc-900 px-5 py-3 text-sm">
+            <div className="flex items-center justify-between rounded-none border border-zinc-700 bg-black/40 backdrop-blur-sm px-5 py-3 text-sm">
               <div>
                 <span className="text-zinc-400">Barbero: </span>
                 <span className="text-zinc-100">{selectedBarber.displayName}</span>
