@@ -1,13 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import type { BookingSettings } from "@/modules/settings/queries";
+import type { AdminSettings } from "./AdminPanel";
 
-const inputClass =
-  "w-full bg-black/40 border border-zinc-700 px-4 py-3 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-white transition-colors";
-
-export function SettingsForm({ initial }: { initial: BookingSettings }) {
-  const [paymentWindowMinutes, setPaymentWindowMinutes] = useState(String(initial.paymentWindowMinutes));
+export function ConfigTab({ settings }: { settings: AdminSettings }) {
+  const [paymentWindowMinutes, setPaymentWindowMinutes] = useState(String(settings.paymentWindowMinutes));
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -44,18 +41,20 @@ export function SettingsForm({ initial }: { initial: BookingSettings }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+      <p className="text-xs uppercase tracking-widest text-zinc-400">Configuración global</p>
 
       <div className="flex flex-col gap-1.5">
-        <label className="text-xs text-zinc-400">Tiempo de pago (minutos)</label>
+        <label className="text-xs text-zinc-500">Tiempo de pago (minutos)</label>
         <input
           type="number"
           min={5}
           max={1440}
           value={paymentWindowMinutes}
           onChange={(e) => { setPaymentWindowMinutes(e.target.value); setSaved(false); }}
-          className={inputClass}
+          className="w-full bg-black/40 border border-zinc-700 px-4 py-3 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-white transition-colors"
         />
+        <p className="text-xs text-zinc-600">Tiempo que tiene el cliente para subir el comprobante tras reservar.</p>
       </div>
 
       {error && <p className="text-xs text-red-400">{error}</p>}
@@ -68,7 +67,6 @@ export function SettingsForm({ initial }: { initial: BookingSettings }) {
       >
         {loading ? "Guardando..." : "Guardar"}
       </button>
-
     </form>
   );
 }
