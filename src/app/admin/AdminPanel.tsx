@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { signOut } from "next-auth/react";
 import { TurnosAdminTab } from "./TurnosAdminTab";
 import { BarberosTab } from "./BarberosTab";
 import { ConfigTab } from "./ConfigTab";
@@ -65,9 +66,17 @@ export function AdminPanel({ adminName, bookings, barbers, settings }: Props) {
     <div className="min-h-screen bg-zinc-950 text-zinc-100">
 
       {/* Header */}
-      <div className="px-4 pt-10 max-w-xl mx-auto">
-        <p className="text-[#e63946] text-xs uppercase tracking-widest mb-1">Panel de administrador</p>
-        <h1 className="text-2xl font-black tracking-widest uppercase">{adminName}</h1>
+      <div className="px-4 pt-10 max-w-xl mx-auto flex items-start justify-between gap-4">
+        <div>
+          <p className="text-[#e63946] text-xs uppercase tracking-widest mb-1">Panel de administrador</p>
+          <h1 className="text-2xl font-black tracking-widest uppercase">{adminName}</h1>
+        </div>
+        <button
+          onClick={() => signOut({ callbackUrl: "/login" })}
+          className="text-xs text-zinc-500 hover:text-white uppercase tracking-widest transition-colors mt-1 shrink-0"
+        >
+          Cerrar sesión
+        </button>
       </div>
 
       {/* Tab nav */}

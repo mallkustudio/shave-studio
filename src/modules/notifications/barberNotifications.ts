@@ -1,6 +1,9 @@
 import { prisma } from "@/lib/prisma";
 import { sendEmail } from "@/lib/mailer";
 import { formatARTTime, formatARTDateLabel } from "@/lib/tz";
+import { buildEmail, detalleRow } from "./emailTemplate";
+
+const SITE_URL = process.env.NEXTAUTH_URL ?? "https://shave-studio.com";
 
 export async function sendProofReceivedNotification(bookingId: string): Promise<void> {
   const booking = await prisma.booking.findUnique({
@@ -26,21 +29,37 @@ export async function sendProofReceivedNotification(bookingId: string): Promise<
   const barberName = booking.barber.displayName;
   const dateLabel = formatARTDateLabel(booking.startAt);
   const timeLabel = formatARTTime(booking.startAt);
-  const proofLink = booking.paymentProofUrl;
+
+  const cta = `<table cellpadding="0" cellspacing="0" style="margin-top:8px;">
+    <tr>
+      <td style="background:#e63946;padding:0;">
+        <a href="${SITE_URL}/barber"
+           style="display:inline-block;padding:14px 32px;color:#ffffff;font-size:12px;
+                  font-weight:bold;text-transform:uppercase;letter-spacing:2px;
+                  text-decoration:none;">
+          IR AL PANEL
+        </a>
+      </td>
+    </tr>
+  </table>`;
 
   await sendEmail({
     to: barberEmail,
     subject: `Nuevo comprobante de pago — ${booking.customerName}`,
-    html: `
-      <p>Hola ${barberName},</p>
-      <p>
-        <strong>${booking.customerName}</strong> subió un comprobante de pago
-        para su turno del <strong>${dateLabel} a las ${timeLabel} hs</strong>
-        (${booking.service.name}).
-      </p>
-      <p><a href="${proofLink}">Ver comprobante →</a></p>
-      <p>Ingresá al panel para confirmar o rechazar el turno.</p>
-      <p style="color:#888;font-size:12px;">ID de reserva: ${booking.id}</p>
-    `,
+    html: buildEmail({
+      titulo: "NUEVO COMPROBANTE",
+      nombre: barberName,
+      contenido: `<p style="color:#cccccc;font-size:15px;line-height:1.6;margin:0 0 16px;">
+        Un cliente subió un comprobante de pago y está esperando <strong style="color:#ffffff;">confirmación</strong>.
+      </p>`,
+      detalleRows: [
+        detalleRow("Cliente", booking.customerName),
+        detalleRow("Servicio", booking.service.name),
+        detalleRow("Fecha", dateLabel),
+        detalleRow("Hora", `${timeLabel} hs`),
+      ].join(""),
+      cta,
+      bookingId: booking.id,
+    }),
   });
 }
