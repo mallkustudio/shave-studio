@@ -1,8 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
-import { Pool } from "pg";
+import { Pool, type PoolConfig } from "pg";
 
-const pool = new Pool({
+const poolConfig: PoolConfig & { family?: number } = {
   host: "aws-1-us-west-2.pooler.supabase.com",
   port: 5432,
   user: "postgres.ocfduuxsnpcjkqwmrpqh",
@@ -10,7 +10,9 @@ const pool = new Pool({
   database: "postgres",
   ssl: { rejectUnauthorized: false },
   family: 4,
-});
+};
+
+const pool = new Pool(poolConfig);
 
 const adapter = new PrismaPg(pool);
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient | undefined };

@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import type { PublicBarber } from "@/modules/barbers/queries";
-import type { TransferInfo } from "@/modules/settings/queries";
 import { DateTimePicker } from "./DateTimePicker";
 import { BookingForm } from "./BookingForm";
 import { PaymentProofUpload } from "./PaymentProofUpload";
@@ -12,12 +11,11 @@ type Step = "selection" | "datetime" | "confirm" | "payment" | "success";
 
 type Props = {
   barbers: PublicBarber[];
-  transferInfo: TransferInfo;
   initialBarberId?: string | null;
   initialServiceId?: string | null;
 };
 
-export function BarberServicePicker({ barbers, transferInfo, initialBarberId = null, initialServiceId = null }: Props) {
+export function BarberServicePicker({ barbers, initialBarberId = null, initialServiceId = null }: Props) {
   const [step, setStep] = useState<Step>("selection");
   const [selectedBarberId, setSelectedBarberId] = useState<string | null>(initialBarberId);
   const [selectedServiceId, setSelectedServiceId] = useState<string | null>(initialServiceId);
@@ -175,12 +173,16 @@ export function BarberServicePicker({ barbers, transferInfo, initialBarberId = n
           />
         )}
 
-        {step === "payment" && selectedService && bookingId && paymentExpiresAt && (
+        {step === "payment" && selectedBarber && selectedService && bookingId && paymentExpiresAt && (
           <PaymentProofUpload
             bookingId={bookingId}
             amount={selectedService.price}
             paymentExpiresAt={paymentExpiresAt}
-            transferInfo={transferInfo}
+            transferInfo={{
+              alias: selectedBarber.transferAlias,
+              holderName: selectedBarber.transferHolderName,
+              cbuOrCvu: selectedBarber.transferCBUorCVU,
+            }}
             onSuccess={() => setStep("success")}
           />
         )}

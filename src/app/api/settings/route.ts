@@ -9,7 +9,7 @@ export async function GET() {
 
 export async function PATCH(req: NextRequest) {
   const body = await req.json();
-  const { paymentWindowMinutes, transferAlias, transferHolderName, transferCBUorCVU } = body;
+  const { paymentWindowMinutes } = body;
 
   if (
     paymentWindowMinutes !== undefined &&
@@ -23,25 +23,9 @@ export async function PATCH(req: NextRequest) {
 
   const updated = await prisma.bookingSettings.upsert({
     where: { id: "global" },
-    create: {
-      id: "global",
-      paymentWindowMinutes: paymentWindowMinutes ?? 30,
-      transferAlias: transferAlias ?? "",
-      transferHolderName: transferHolderName ?? "",
-      transferCBUorCVU: transferCBUorCVU ?? "",
-    },
-    update: {
-      ...(paymentWindowMinutes !== undefined && { paymentWindowMinutes }),
-      ...(transferAlias !== undefined && { transferAlias: (transferAlias as string).trim() }),
-      ...(transferHolderName !== undefined && { transferHolderName: (transferHolderName as string).trim() }),
-      ...(transferCBUorCVU !== undefined && { transferCBUorCVU: (transferCBUorCVU as string).trim() }),
-    },
+    create: { id: "global", paymentWindowMinutes: paymentWindowMinutes ?? 30 },
+    update: { ...(paymentWindowMinutes !== undefined && { paymentWindowMinutes }) },
   });
 
-  return NextResponse.json({
-    paymentWindowMinutes: updated.paymentWindowMinutes,
-    transferAlias: updated.transferAlias,
-    transferHolderName: updated.transferHolderName,
-    transferCBUorCVU: updated.transferCBUorCVU,
-  });
+  return NextResponse.json({ paymentWindowMinutes: updated.paymentWindowMinutes });
 }

@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { formatARS } from "@/lib/money";
-import type { TransferInfo } from "@/modules/settings/queries";
+import type { TransferInfo } from "@/modules/barbers/queries";
 
 type Props = {
   bookingId: string;

@@ -97,7 +97,7 @@ export async function POST(req: NextRequest) {
       barberId,
       serviceId,
       customerName: fullName.trim(),
-      customerEmail: email ? (email as string).trim().toLowerCase() : null,
+      customerEmail: email ? (email as string).trim().toLowerCase() : "",
       customerPhone: phone?.trim() || null,
       startAt,
       endAt,

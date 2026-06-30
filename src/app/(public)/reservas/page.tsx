@@ -1,5 +1,4 @@
 import { getPublicBarbers } from "@/modules/barbers/queries";
-import { getSettings, settingsToTransferInfo } from "@/modules/settings/queries";
 import { BarberServicePicker } from "./BarberServicePicker";
 
 type Props = {
@@ -7,13 +6,7 @@ type Props = {
 };
 
 export default async function ReservasPage({ searchParams }: Props) {
-  const [barbers, settings, params] = await Promise.all([
-    getPublicBarbers(),
-    getSettings(),
-    searchParams,
-  ]);
-
-  const transferInfo = settingsToTransferInfo(settings);
+  const [barbers, params] = await Promise.all([getPublicBarbers(), searchParams]);
 
   const rawBarberId = params.barberId;
   const rawServiceId = params.serviceId;
@@ -28,7 +21,6 @@ export default async function ReservasPage({ searchParams }: Props) {
     const matchedService = matchedBarber.services.find((s) => s.id === rawServiceId);
     if (matchedService) initialServiceId = matchedService.id;
   } else if (rawServiceId) {
-    // No valid barberId — find the first barber that offers this service
     for (const barber of barbers) {
       const matchedService = barber.services.find((s) => s.id === rawServiceId);
       if (matchedService) {
@@ -42,7 +34,6 @@ export default async function ReservasPage({ searchParams }: Props) {
   return (
     <BarberServicePicker
       barbers={barbers}
-      transferInfo={transferInfo}
       initialBarberId={initialBarberId}
       initialServiceId={initialServiceId}
     />

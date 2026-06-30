@@ -56,17 +56,27 @@ export async function getAvailableSlots(
 
   // Fetch existing bookings for this barber within the ART day (UTC range)
   // PENDING_PAYMENT only blocks if the payment window hasn't expired yet.
-  const bookings = await prisma.booking.findMany({
-    where: {
-      barberId,
-      startAt: { gte: dayStart, lte: dayEnd },
-      OR: [
-        { status: { in: [BookingStatus.PENDING_REVIEW, BookingStatus.CONFIRMED] } },
-        { status: BookingStatus.PENDING_PAYMENT, paymentExpiresAt: { gt: new Date()  } },
-      ],
-    },
-    select: { startAt: true, endAt: true },
-  });
+  const [bookings, blockedTimes] = await Promise.all([
+    prisma.booking.findMany({
+      where: {
+        barberId,
+        startAt: { gte: dayStart, lte: dayEnd },
+        OR: [
+          { status: { in: [BookingStatus.PENDING_REVIEW, BookingStatus.CONFIRMED] } },
+          { status: BookingStatus.PENDING_PAYMENT, paymentExpiresAt: { gt: new Date() } },
+        ],
+      },
+      select: { startAt: true, endAt: true },
+    }),
+    prisma.blockedTime.findMany({
+      where: {
+        barberId,
+        startAt: { lt: dayEnd },
+        endAt: { gt: dayStart },
+      },
+      select: { startAt: true, endAt: true },
+    }),
+  ]);
 
   // Generate slots
   // availability times are stored as 1970-01-01THH:MM:00Z — read via getUTCHours/Minutes
@@ -87,8 +97,11 @@ export async function getAvailableSlots(
     const hasConflict = bookings.some(
       (b) => b.startAt < slotEnd && b.endAt > slotStart
     );
+    const isBlocked = blockedTimes.some(
+      (bt) => bt.startAt < slotEnd && bt.endAt > slotStart
+    );
 
-    if (!hasConflict) {
+    if (!hasConflict && !isBlocked) {
       slots.push(formatMinutes(m)); // returned as "HH:MM" ART local time
     }
   }

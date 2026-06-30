@@ -8,9 +8,6 @@ const inputClass =
 
 export function SettingsForm({ initial }: { initial: BookingSettings }) {
   const [paymentWindowMinutes, setPaymentWindowMinutes] = useState(String(initial.paymentWindowMinutes));
-  const [transferCBUorCVU, setTransferCBUorCVU] = useState(initial.transferCBUorCVU);
-  const [transferAlias, setTransferAlias] = useState(initial.transferAlias);
-  const [transferHolderName, setTransferHolderName] = useState(initial.transferHolderName);
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -31,12 +28,7 @@ export function SettingsForm({ initial }: { initial: BookingSettings }) {
       const res = await fetch("/api/settings", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          paymentWindowMinutes: minutes,
-          transferCBUorCVU: transferCBUorCVU.trim(),
-          transferAlias: transferAlias.trim(),
-          transferHolderName: transferHolderName.trim(),
-        }),
+        body: JSON.stringify({ paymentWindowMinutes: minutes }),
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
@@ -62,39 +54,6 @@ export function SettingsForm({ initial }: { initial: BookingSettings }) {
           max={1440}
           value={paymentWindowMinutes}
           onChange={(e) => { setPaymentWindowMinutes(e.target.value); setSaved(false); }}
-          className={inputClass}
-        />
-      </div>
-
-      <div className="flex flex-col gap-1.5">
-        <label className="text-xs text-zinc-400">CBU / CVU</label>
-        <input
-          type="text"
-          value={transferCBUorCVU}
-          onChange={(e) => { setTransferCBUorCVU(e.target.value); setSaved(false); }}
-          placeholder="0000000000000000000000"
-          className={`${inputClass} font-mono`}
-        />
-      </div>
-
-      <div className="flex flex-col gap-1.5">
-        <label className="text-xs text-zinc-400">Alias</label>
-        <input
-          type="text"
-          value={transferAlias}
-          onChange={(e) => { setTransferAlias(e.target.value); setSaved(false); }}
-          placeholder="ALIAS.PAGO"
-          className={inputClass}
-        />
-      </div>
-
-      <div className="flex flex-col gap-1.5">
-        <label className="text-xs text-zinc-400">Titular</label>
-        <input
-          type="text"
-          value={transferHolderName}
-          onChange={(e) => { setTransferHolderName(e.target.value); setSaved(false); }}
-          placeholder="Nombre del titular"
           className={inputClass}
         />
       </div>

@@ -1,5 +1,11 @@
 import { prisma } from "@/lib/prisma";
 
+export type TransferInfo = {
+  alias: string | null;
+  holderName: string | null;
+  cbuOrCvu: string | null;
+};
+
 export type PublicBarber = {
   id: string;
   displayName: string;
@@ -12,7 +18,11 @@ export type PublicBarber = {
     durationMinutes: number;
     price: number;
   }[];
+  transferAlias: string | null;
+  transferHolderName: string | null;
+  transferCBUorCVU: string | null;
 };
+
 
 export async function getPublicBarbers(): Promise<PublicBarber[]> {
   const raw = await prisma.barber.findMany({
@@ -22,6 +32,9 @@ export async function getPublicBarbers(): Promise<PublicBarber[]> {
       displayName: true,
       bio: true,
       avatarUrl: true,
+      transferAlias: true,
+      transferHolderName: true,
+      transferCBUorCVU: true,
       availability: {
         where: { isActive: true },
         select: { dayOfWeek: true },
@@ -51,6 +64,9 @@ export async function getPublicBarbers(): Promise<PublicBarber[]> {
     displayName: barber.displayName,
     bio: barber.bio,
     avatarUrl: barber.avatarUrl,
+    transferAlias: barber.transferAlias,
+    transferHolderName: barber.transferHolderName,
+    transferCBUorCVU: barber.transferCBUorCVU,
     availableDays: barber.availability.map((a) => a.dayOfWeek),
     services: barber.services.map(({ customPrice, service }) => ({
       id: service.id,
