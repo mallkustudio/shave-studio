@@ -1,46 +1,35 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { getUpcomingBookingsForBarber, type UpcomingBooking } from "@/modules/bookings/queries";
-import { formatARTTime, formatARTDateLabel, toARTDateKey } from "@/lib/tz";
-import { formatARS } from "@/lib/money";
-import { BookingCard } from "./BookingCard";
-import { ManualBookingForm } from "./ManualBookingForm";
-
-function groupByDate(
-  bookings: UpcomingBooking[]
-): { key: string; label: string; bookings: UpcomingBooking[] }[] {
-  const map = new Map<string, { label: string; bookings: UpcomingBooking[] }>();
-
-  for (const booking of bookings) {
-    const key = toARTDateKey(booking.startAt);
-    if (!map.has(key)) {
-      map.set(key, { label: formatARTDateLabel(booking.startAt), bookings: [] });
-    }
-    map.get(key)!.bookings.push(booking);
-  }
-
-  return [...map.entries()]
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([key, value]) => ({ key, ...value }));
-}
+import { getUpcomingBookingsForBarber } from "@/modules/bookings/queries";
+import { BarberPanel } from "./BarberPanel";
+import type { BarberInfo, BarberServiceItem, AvailabilityItem, BlockedTimeItem, BookingItem } from "./BarberPanel";
 
 export default async function BarberPage() {
   const session = await auth();
   const barberEmail = session?.user?.email;
 
-  if (!barberEmail) {
-    redirect("/login");
-  }
+  if (!barberEmail) redirect("/login");
 
   const user = await prisma.user.findUnique({
     where: { email: barberEmail },
-    select: { barber: { select: { id: true, displayName: true } } },
+    select: {
+      barber: {
+        select: {
+          id: true,
+          displayName: true,
+          depositPercentage: true,
+          transferAlias: true,
+          transferHolderName: true,
+          transferCBUorCVU: true,
+        },
+      },
+    },
   });
 
-  const barber = user?.barber;
+  const barberRaw = user?.barber;
 
-  if (!barber) {
+  if (!barberRaw) {
     return (
       <div className="min-h-screen bg-zinc-950 text-zinc-500 flex items-center justify-center text-sm">
         Barbero no encontrado.
@@ -48,86 +37,86 @@ export default async function BarberPage() {
     );
   }
 
-  const [bookings, barberServices] = await Promise.all([
-    getUpcomingBookingsForBarber(barber.id),
-    prisma.barber.findUnique({
-      where: { id: barber.id },
+  const [bookingsRaw, servicesRaw, availabilityRaw, blockedTimesRaw] = await Promise.all([
+    getUpcomingBookingsForBarber(barberRaw.id),
+    prisma.barberService.findMany({
+      where: { barberId: barberRaw.id, service: { isActive: true } },
       select: {
-        services: {
-          where: { isActive: true, service: { isActive: true } },
-          select: {
-            customPrice: true,
-            service: { select: { id: true, name: true, durationMinutes: true, price: true } },
-          },
+        id: true,
+        customPrice: true,
+        isActive: true,
+        service: {
+          select: { id: true, name: true, description: true, durationMinutes: true, price: true },
         },
       },
+      orderBy: { service: { name: "asc" } },
+    }),
+    prisma.availability.findMany({
+      where: { barberId: barberRaw.id },
+      select: { id: true, dayOfWeek: true, startTime: true, endTime: true, isActive: true },
+    }),
+    prisma.blockedTime.findMany({
+      where: { barberId: barberRaw.id, endAt: { gt: new Date() } },
+      select: { id: true, startAt: true, endAt: true, reason: true, createdAt: true },
+      orderBy: { startAt: "asc" },
     }),
   ]);
 
-  const services = (barberServices?.services ?? []).map(({ customPrice, service }) => ({
-    id: service.id,
+  const barber: BarberInfo = barberRaw;
+
+  const services: BarberServiceItem[] = servicesRaw.map(({ id, customPrice, isActive, service }) => ({
+    id,
+    serviceId: service.id,
     name: service.name,
+    description: service.description,
     durationMinutes: service.durationMinutes,
-    price: Number(customPrice ?? service.price),
+    basePrice: Number(service.price),
+    customPrice: customPrice !== null ? Number(customPrice) : null,
+    effectivePrice: Number(customPrice ?? service.price),
+    isActive,
   }));
 
-  const groups = groupByDate(bookings);
+  function fmtTime(dt: Date): string {
+    return `${dt.getUTCHours().toString().padStart(2, "0")}:${dt.getUTCMinutes().toString().padStart(2, "0")}`;
+  }
+
+  const availability: AvailabilityItem[] = availabilityRaw.map((a) => ({
+    id: a.id,
+    dayOfWeek: a.dayOfWeek,
+    startTime: fmtTime(a.startTime),
+    endTime: fmtTime(a.endTime),
+    isActive: a.isActive,
+  }));
+
+  const blockedTimes: BlockedTimeItem[] = blockedTimesRaw.map((bt) => ({
+    id: bt.id,
+    startAt: bt.startAt.toISOString(),
+    endAt: bt.endAt.toISOString(),
+    reason: bt.reason,
+    createdAt: bt.createdAt.toISOString(),
+  }));
+
+  const bookings: BookingItem[] = bookingsRaw.map((b) => ({
+    id: b.id,
+    customerName: b.customerName,
+    customerEmail: b.customerEmail,
+    customerPhone: b.customerPhone,
+    startAt: b.startAt.toISOString(),
+    serviceName: b.service.name,
+    serviceDurationMinutes: b.service.durationMinutes,
+    servicePrice: b.service.price,
+    status: b.status,
+    paymentProofUrl: b.paymentProofUrl,
+    paymentExpiresAt: b.paymentExpiresAt?.toISOString() ?? null,
+  }));
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100 px-4 py-10 flex flex-col items-center">
-      <div className="w-full max-w-xl flex flex-col gap-8">
-
-        {/* Header */}
-        <div>
-          <p className="text-amber-500 text-xs uppercase tracking-widest mb-1">Panel de barbero</p>
-          <h1 className="text-2xl font-semibold tracking-tight">{barber.displayName}</h1>
-          <p className="text-zinc-400 text-sm mt-1">Próximos turnos</p>
-        </div>
-
-        {/* Manual booking */}
-        <ManualBookingForm barberId={barber.id} services={services} />
-
-        {/* Bookings */}
-        {groups.length === 0 ? (
-          <div className="rounded-xl border border-zinc-800 bg-zinc-900 px-5 py-8 text-center">
-            <p className="text-zinc-500 text-sm">No hay turnos próximos.</p>
-          </div>
-        ) : (
-          <div className="flex flex-col gap-8">
-            {groups.map(({ key, label, bookings: dayBookings }) => (
-              <section key={key} className="flex flex-col gap-3">
-
-                {/* Date label */}
-                <h2 className="text-xs uppercase tracking-widest text-zinc-500 capitalize">
-                  {label}
-                </h2>
-
-                {/* Booking cards */}
-                <div className="flex flex-col gap-2">
-                  {dayBookings.map((booking) => (
-                    <BookingCard
-                      key={booking.id}
-                      id={booking.id}
-                      customerName={booking.customerName}
-                      customerEmail={booking.customerEmail}
-                      customerPhone={booking.customerPhone}
-                      formattedTime={formatARTTime(booking.startAt)}
-                      serviceName={booking.service.name}
-                      durationMinutes={booking.service.durationMinutes}
-                      formattedPrice={formatARS(booking.service.price)}
-                      status={booking.status}
-                      paymentProofUrl={booking.paymentProofUrl}
-                      paymentExpiresAt={booking.paymentExpiresAt?.toISOString() ?? null}
-                    />
-                  ))}
-                </div>
-
-              </section>
-            ))}
-          </div>
-        )}
-
-      </div>
-    </div>
+    <BarberPanel
+      barber={barber}
+      services={services}
+      availability={availability}
+      blockedTimes={blockedTimes}
+      bookings={bookings}
+    />
   );
 }
