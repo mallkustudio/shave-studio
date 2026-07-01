@@ -115,10 +115,14 @@ export function BookingForm({
         }),
       });
 
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
 
       if (!res.ok) {
-        setError(data.error ?? "Error al crear la reserva");
+        if (res.status === 409) {
+          setError("Este horario ya no está disponible. Por favor elegí otro.");
+        } else {
+          setError(data.error ?? "Ocurrió un error. Intentá nuevamente.");
+        }
         return;
       }
 

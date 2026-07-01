@@ -2,8 +2,19 @@ import { prisma } from "@/lib/prisma";
 import { sendEmail } from "@/lib/mailer";
 import { formatARTTime, formatARTDateLabel } from "@/lib/tz";
 import { buildEmail, detalleRow } from "./emailTemplate";
+import { formatARS } from "@/lib/money";
 
 const SITE_URL = process.env.NEXTAUTH_URL ?? "https://shave-studio.com";
+
+function paymentRows(depositAmount: number | null, servicePrice: number): string {
+  const total = Number(servicePrice);
+  const deposit = depositAmount ?? total;
+  if (deposit < total) {
+    return detalleRow("Seña abonada", formatARS(deposit)) +
+           detalleRow("Total servicio", formatARS(total));
+  }
+  return detalleRow("Total abonado", formatARS(total));
+}
 
 async function fetchBookingForCustomer(bookingId: string) {
   return prisma.booking.findUnique({
@@ -13,8 +24,9 @@ async function fetchBookingForCustomer(bookingId: string) {
       customerName: true,
       customerEmail: true,
       startAt: true,
+      depositAmount: true,
       barber: { select: { displayName: true } },
-      service: { select: { name: true } },
+      service: { select: { name: true, price: true } },
     },
   });
 }
@@ -40,6 +52,7 @@ export async function sendProofConfirmationToCustomer(bookingId: string): Promis
         detalleRow("Servicio", booking.service.name),
         detalleRow("Fecha", dateLabel),
         detalleRow("Hora", `${timeLabel} hs`),
+        paymentRows(booking.depositAmount, Number(booking.service.price)),
       ].join(""),
       bookingId: booking.id,
     }),
@@ -80,6 +93,7 @@ export async function sendBookingConfirmedToCustomer(bookingId: string): Promise
         detalleRow("Servicio", booking.service.name),
         detalleRow("Fecha", dateLabel),
         detalleRow("Hora", `${timeLabel} hs`),
+        paymentRows(booking.depositAmount, Number(booking.service.price)),
       ].join(""),
       cta,
       bookingId: booking.id,
@@ -108,6 +122,7 @@ export async function sendBookingRejectedToCustomer(bookingId: string): Promise<
         detalleRow("Servicio", booking.service.name),
         detalleRow("Fecha", dateLabel),
         detalleRow("Hora", `${timeLabel} hs`),
+        paymentRows(booking.depositAmount, Number(booking.service.price)),
       ].join(""),
       bookingId: booking.id,
     }),

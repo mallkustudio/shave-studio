@@ -6,7 +6,9 @@ import type { TransferInfo } from "@/modules/barbers/queries";
 
 type Props = {
   bookingId: string;
-  amount: number;
+  depositAmount: number;
+  totalAmount: number;
+  depositPercentage: number;
   paymentExpiresAt: string; // ISO string
   transferInfo: TransferInfo;
   onSuccess: () => void;
@@ -22,7 +24,7 @@ function formatCountdown(seconds: number): string {
   return `${m}:${s}`;
 }
 
-export function PaymentProofUpload({ bookingId, amount, paymentExpiresAt, transferInfo, onSuccess }: Props) {
+export function PaymentProofUpload({ bookingId, depositAmount, totalAmount, depositPercentage, paymentExpiresAt, transferInfo, onSuccess }: Props) {
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -113,9 +115,22 @@ export function PaymentProofUpload({ bookingId, amount, paymentExpiresAt, transf
             </>
           )}
         </div>
-        <div className="border-t border-zinc-700 pt-3 flex items-center justify-between">
-          <span className="text-zinc-400 text-sm">Monto</span>
-          <span className="text-[#e63946] font-semibold text-base">{formatARS(amount)}</span>
+        <div className="border-t border-zinc-700 pt-3 flex flex-col gap-2">
+          <div className="flex items-center justify-between">
+            <span className="text-zinc-400 text-sm">
+              {depositPercentage < 100 ? "SEÑA A ABONAR" : "TOTAL A ABONAR"}
+            </span>
+            <span className="text-[#e63946] font-semibold text-base">{formatARS(depositAmount)}</span>
+          </div>
+          {depositPercentage < 100 && (
+            <>
+              <div className="flex items-center justify-between">
+                <span className="text-zinc-500 text-xs">Total del servicio</span>
+                <span className="text-zinc-400 text-xs">{formatARS(totalAmount)}</span>
+              </div>
+              <p className="text-zinc-600 text-xs">Este monto es la seña para confirmar tu turno.</p>
+            </>
+          )}
         </div>
       </section>
 

@@ -176,7 +176,9 @@ export function BarberServicePicker({ barbers, initialBarberId = null, initialSe
         {step === "payment" && selectedBarber && selectedService && bookingId && paymentExpiresAt && (
           <PaymentProofUpload
             bookingId={bookingId}
-            amount={selectedService.price}
+            depositAmount={Math.round(selectedService.price * (selectedBarber.depositPercentage ?? 100) / 100)}
+            totalAmount={selectedService.price}
+            depositPercentage={selectedBarber.depositPercentage ?? 100}
             paymentExpiresAt={paymentExpiresAt}
             transferInfo={{
               alias: selectedBarber.transferAlias,

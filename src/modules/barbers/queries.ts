@@ -11,6 +11,7 @@ export type PublicBarber = {
   displayName: string;
   bio: string | null;
   avatarUrl: string | null;
+  depositPercentage: number;
   availableDays: string[]; // e.g. ["MON","TUE","WED","THU","FRI","SAT"]
   services: {
     id: string;
@@ -32,6 +33,7 @@ export async function getPublicBarbers(): Promise<PublicBarber[]> {
       displayName: true,
       bio: true,
       avatarUrl: true,
+      depositPercentage: true,
       transferAlias: true,
       transferHolderName: true,
       transferCBUorCVU: true,
@@ -64,6 +66,7 @@ export async function getPublicBarbers(): Promise<PublicBarber[]> {
     displayName: barber.displayName,
     bio: barber.bio,
     avatarUrl: barber.avatarUrl,
+    depositPercentage: barber.depositPercentage,
     transferAlias: barber.transferAlias,
     transferHolderName: barber.transferHolderName,
     transferCBUorCVU: barber.transferCBUorCVU,

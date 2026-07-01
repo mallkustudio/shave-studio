@@ -11,6 +11,7 @@ export type AdminUpcomingBooking = {
   status: "PENDING_PAYMENT" | "PENDING_REVIEW" | "CONFIRMED" | "REJECTED" | "CANCELLED" | "PAYMENT_EXPIRED" | "NO_SHOW";
   paymentProofUrl: string | null;
   paymentExpiresAt: Date | null;
+  depositAmount: number | null;
   service: {
     name: string;
     durationMinutes: number;
@@ -37,6 +38,7 @@ export async function getAllUpcomingBookings(): Promise<AdminUpcomingBooking[]> 
       status: true,
       paymentProofUrl: true,
       paymentExpiresAt: true,
+      depositAmount: true,
       barber: { select: { displayName: true } },
       service: {
         select: {
@@ -59,6 +61,7 @@ export async function getAllUpcomingBookings(): Promise<AdminUpcomingBooking[]> 
     status: b.status as AdminUpcomingBooking["status"],
     paymentProofUrl: b.paymentProofUrl,
     paymentExpiresAt: b.paymentExpiresAt,
+    depositAmount: b.depositAmount,
     service: {
       name: b.service.name,
       durationMinutes: b.service.durationMinutes,
@@ -77,6 +80,7 @@ export type UpcomingBooking = {
   status: "PENDING_PAYMENT" | "PENDING_REVIEW" | "CONFIRMED" | "REJECTED" | "CANCELLED" | "PAYMENT_EXPIRED" | "NO_SHOW";
   paymentProofUrl: string | null;
   paymentExpiresAt: Date | null;
+  depositAmount: number | null;
   service: {
     name: string;
     durationMinutes: number;
@@ -106,6 +110,7 @@ export async function getUpcomingBookingsForBarber(
       status: true,
       paymentProofUrl: true,
       paymentExpiresAt: true,
+      depositAmount: true,
       service: {
         select: {
           name: true,

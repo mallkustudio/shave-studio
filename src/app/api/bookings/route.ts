@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { artMidnightUTC } from "@/lib/tz";
 import { getSettings } from "@/modules/settings/queries";
+import { Prisma } from "@prisma/client";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_CHARS_REGEX = /^[\d\s+\-()]+$/;
@@ -86,25 +87,48 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const settings = await getSettings();
+  const [settings, barber, barberService] = await Promise.all([
+    getSettings(),
+    prisma.barber.findUnique({ where: { id: barberId }, select: { depositPercentage: true } }),
+    prisma.barberService.findFirst({
+      where: { barberId, serviceId },
+      select: { customPrice: true, service: { select: { price: true } } },
+    }),
+  ]);
+
+  const servicePrice = Number(barberService?.customPrice ?? barberService?.service.price ?? 0);
+  const depositPercentage = barber?.depositPercentage ?? 100;
+  const depositAmount = Math.round(servicePrice * depositPercentage / 100);
 
   const paymentExpiresAt = isManual
     ? null
     : new Date(Date.now() + settings.paymentWindowMinutes * 60_000);
 
-  const booking = await prisma.booking.create({
-    data: {
-      barberId,
-      serviceId,
-      customerName: fullName.trim(),
-      customerEmail: email ? (email as string).trim().toLowerCase() : "",
-      customerPhone: phone?.trim() || null,
-      startAt,
-      endAt,
-      status: isManual ? "CONFIRMED" : "PENDING_PAYMENT",
-      paymentExpiresAt,
-    },
-  });
+  let booking;
+  try {
+    booking = await prisma.booking.create({
+      data: {
+        barberId,
+        serviceId,
+        customerName: fullName.trim(),
+        customerEmail: email ? (email as string).trim().toLowerCase() : "",
+        customerPhone: phone?.trim() || null,
+        startAt,
+        endAt,
+        status: isManual ? "CONFIRMED" : "PENDING_PAYMENT",
+        paymentExpiresAt,
+        depositAmount,
+      },
+    });
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2002") {
+      return NextResponse.json(
+        { error: "El horario ya no está disponible. Por favor elegí otro." },
+        { status: 409 }
+      );
+    }
+    throw err;
+  }
 
   return NextResponse.json(
     { bookingId: booking.id, paymentExpiresAt: booking.paymentExpiresAt?.toISOString() ?? null },

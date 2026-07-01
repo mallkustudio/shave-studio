@@ -54,7 +54,9 @@ export function TurnosAdminTab({ bookings }: Props) {
                 formattedTime={formatARTTime(new Date(b.startAt))}
                 serviceName={b.serviceName}
                 durationMinutes={b.serviceDurationMinutes}
+                servicePrice={b.servicePrice}
                 formattedPrice={formatARS(b.servicePrice)}
+                depositAmount={b.depositAmount}
                 status={b.status}
                 paymentProofUrl={b.paymentProofUrl}
                 paymentExpiresAt={b.paymentExpiresAt}

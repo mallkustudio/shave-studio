@@ -149,6 +149,7 @@ model Booking {
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @updatedAt
   cancelledAt      DateTime?
+  depositAmount    Int?
 
   barber     Barber  @relation(fields: [barberId], references: [id])
   service    Service @relation(fields: [serviceId], references: [id])

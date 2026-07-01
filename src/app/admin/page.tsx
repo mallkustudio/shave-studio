@@ -40,6 +40,7 @@ export default async function AdminPage() {
     serviceName: b.service.name,
     serviceDurationMinutes: b.service.durationMinutes,
     servicePrice: b.service.price,
+    depositAmount: b.depositAmount,
     status: b.status,
     paymentProofUrl: b.paymentProofUrl,
     paymentExpiresAt: b.paymentExpiresAt?.toISOString() ?? null,

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { formatARS } from "@/lib/money";
 
 type BookingStatus =
   | "PENDING_PAYMENT"
@@ -21,7 +22,9 @@ type Props = {
   formattedTime: string;
   serviceName: string;
   durationMinutes: number;
+  servicePrice: number;
   formattedPrice: string;
+  depositAmount: number | null;
   status: BookingStatus;
   paymentProofUrl: string | null;
   paymentExpiresAt: string | null; // ISO string
@@ -67,7 +70,9 @@ export function AdminBookingCard({
   formattedTime,
   serviceName,
   durationMinutes,
+  servicePrice,
   formattedPrice,
+  depositAmount,
   status,
   paymentProofUrl,
   paymentExpiresAt,
@@ -120,7 +125,10 @@ export function AdminBookingCard({
             <span className="text-zinc-600"> · </span>
             {durationMinutes} min
             <span className="text-zinc-600"> · </span>
-            {formattedPrice}
+            {depositAmount !== null && depositAmount < servicePrice
+              ? <>Seña: {formatARS(depositAmount)}<span className="text-zinc-600"> / Total: {formattedPrice}</span></>
+              : formattedPrice
+            }
           </p>
           <p className="text-xs text-zinc-500 mt-0.5">{barberName}</p>
         </div>
