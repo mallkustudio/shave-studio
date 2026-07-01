@@ -26,6 +26,7 @@ export type AdminBookingItem = {
   serviceDurationMinutes: number;
   servicePrice: number;
   depositAmount: number | null;
+  discountAmount: number | null;
   status: BookingStatus;
   paymentProofUrl: string | null;
   paymentExpiresAt: string | null;

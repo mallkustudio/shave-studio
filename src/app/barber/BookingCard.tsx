@@ -24,6 +24,7 @@ type Props = {
   servicePrice: number;
   formattedPrice: string;
   depositAmount: number | null;
+  discountAmount: number | null;
   status: BookingStatus;
   paymentProofUrl: string | null;
   paymentExpiresAt: string | null; // ISO string, null for manual bookings
@@ -71,6 +72,7 @@ export function BookingCard({
   servicePrice,
   formattedPrice,
   depositAmount,
+  discountAmount,
   status,
   paymentProofUrl,
   paymentExpiresAt,
@@ -128,6 +130,13 @@ export function BookingCard({
               : formattedPrice
             }
           </p>
+          {discountAmount !== null && discountAmount > 0 && (
+            <p className="text-xs mt-0.5">
+              <span className="text-emerald-400">Descuento: -{formatARS(discountAmount)}</span>
+              <span className="text-zinc-600"> · </span>
+              <span className="text-zinc-300">Precio final: {formatARS(servicePrice - discountAmount)}</span>
+            </p>
+          )}
         </div>
 
         <span className={`shrink-0 text-xs font-medium px-2.5 py-1 rounded-full ${STATUS_CLASS[status]}`}>

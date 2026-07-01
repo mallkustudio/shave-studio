@@ -19,7 +19,7 @@ function validatePhone(raw: string): string | null {
 export async function POST(req: NextRequest) {
   const body = await req.json();
 
-  const { barberId, serviceId, date, slot, durationMinutes, fullName, email, phone, manual } = body;
+  const { barberId, serviceId, date, slot, durationMinutes, fullName, email, phone, manual, discountAmount: rawDiscount } = body;
 
   const isManual = Boolean(manual);
 
@@ -98,7 +98,21 @@ export async function POST(req: NextRequest) {
 
   const servicePrice = Number(barberService?.customPrice ?? barberService?.service.price ?? 0);
   const depositPercentage = barber?.depositPercentage ?? 100;
-  const depositAmount = Math.round(servicePrice * depositPercentage / 100);
+  // Manual bookings are CONFIRMED on creation — no deposit flow
+  const depositAmount = isManual ? null : Math.round(servicePrice * depositPercentage / 100);
+
+  // Discount: only valid for manual bookings
+  let discountAmount: number | null = null;
+  if (isManual && rawDiscount !== undefined && rawDiscount !== null) {
+    const d = Math.round(Number(rawDiscount));
+    if (isNaN(d) || d < 0) {
+      return NextResponse.json({ error: "Descuento inválido" }, { status: 400 });
+    }
+    if (d > servicePrice) {
+      return NextResponse.json({ error: "El descuento no puede ser mayor al precio del servicio" }, { status: 400 });
+    }
+    discountAmount = d > 0 ? d : null;
+  }
 
   const paymentExpiresAt = isManual
     ? null
@@ -118,6 +132,7 @@ export async function POST(req: NextRequest) {
         status: isManual ? "CONFIRMED" : "PENDING_PAYMENT",
         paymentExpiresAt,
         depositAmount,
+        discountAmount,
       },
     });
   } catch (err) {

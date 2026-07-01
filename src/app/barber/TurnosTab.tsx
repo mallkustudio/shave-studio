@@ -61,6 +61,7 @@ export function TurnosTab({ barber, bookings, services }: Props) {
                   servicePrice={b.servicePrice}
                   formattedPrice={formatARS(b.servicePrice)}
                   depositAmount={b.depositAmount}
+                  discountAmount={b.discountAmount}
                   status={b.status}
                   paymentProofUrl={b.paymentProofUrl}
                   paymentExpiresAt={b.paymentExpiresAt}

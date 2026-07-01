@@ -150,6 +150,7 @@ model Booking {
   updatedAt        DateTime      @updatedAt
   cancelledAt      DateTime?
   depositAmount    Int?
+  discountAmount   Int?
 
   barber     Barber  @relation(fields: [barberId], references: [id])
   service    Service @relation(fields: [serviceId], references: [id])

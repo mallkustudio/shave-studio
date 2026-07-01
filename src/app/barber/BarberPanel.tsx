@@ -54,6 +54,7 @@ export type BookingItem = {
   serviceDurationMinutes: number;
   servicePrice: number;
   depositAmount: number | null;
+  discountAmount: number | null;
   status: "PENDING_PAYMENT" | "PENDING_REVIEW" | "CONFIRMED" | "REJECTED" | "CANCELLED" | "PAYMENT_EXPIRED" | "NO_SHOW";
   paymentProofUrl: string | null;
   paymentExpiresAt: string | null;

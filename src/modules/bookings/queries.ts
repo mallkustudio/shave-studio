@@ -12,6 +12,7 @@ export type AdminUpcomingBooking = {
   paymentProofUrl: string | null;
   paymentExpiresAt: Date | null;
   depositAmount: number | null;
+  discountAmount: number | null;
   service: {
     name: string;
     durationMinutes: number;
@@ -39,6 +40,7 @@ export async function getAllUpcomingBookings(): Promise<AdminUpcomingBooking[]> 
       paymentProofUrl: true,
       paymentExpiresAt: true,
       depositAmount: true,
+      discountAmount: true,
       barber: { select: { displayName: true } },
       service: {
         select: {
@@ -62,6 +64,7 @@ export async function getAllUpcomingBookings(): Promise<AdminUpcomingBooking[]> 
     paymentProofUrl: b.paymentProofUrl,
     paymentExpiresAt: b.paymentExpiresAt,
     depositAmount: b.depositAmount,
+    discountAmount: b.discountAmount,
     service: {
       name: b.service.name,
       durationMinutes: b.service.durationMinutes,
@@ -81,6 +84,7 @@ export type UpcomingBooking = {
   paymentProofUrl: string | null;
   paymentExpiresAt: Date | null;
   depositAmount: number | null;
+  discountAmount: number | null;
   service: {
     name: string;
     durationMinutes: number;
@@ -111,6 +115,7 @@ export async function getUpcomingBookingsForBarber(
       paymentProofUrl: true,
       paymentExpiresAt: true,
       depositAmount: true,
+      discountAmount: true,
       service: {
         select: {
           name: true,

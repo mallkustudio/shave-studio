@@ -106,6 +106,7 @@ export default async function BarberPage() {
     serviceDurationMinutes: b.service.durationMinutes,
     servicePrice: b.service.price,
     depositAmount: b.depositAmount,
+    discountAmount: b.discountAmount,
     status: b.status,
     paymentProofUrl: b.paymentProofUrl,
     paymentExpiresAt: b.paymentExpiresAt?.toISOString() ?? null,
