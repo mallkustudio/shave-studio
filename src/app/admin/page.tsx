@@ -24,6 +24,8 @@ export default async function AdminPage() {
         transferAlias: true,
         transferHolderName: true,
         transferCBUorCVU: true,
+        bio: true,
+        user: { select: { email: true, role: true } },
       },
       orderBy: { displayName: "asc" },
     }),
@@ -47,7 +49,18 @@ export default async function AdminPage() {
     paymentExpiresAt: b.paymentExpiresAt?.toISOString() ?? null,
   }));
 
-  const barbers: AdminBarberItem[] = barberRaw;
+  const barbers: AdminBarberItem[] = barberRaw.map((b) => ({
+    id: b.id,
+    displayName: b.displayName,
+    isActive: b.isActive,
+    depositPercentage: b.depositPercentage,
+    transferAlias: b.transferAlias,
+    transferHolderName: b.transferHolderName,
+    transferCBUorCVU: b.transferCBUorCVU,
+    bio: b.bio,
+    email: b.user.email,
+    role: b.user.role,
+  }));
 
   return (
     <AdminPanel

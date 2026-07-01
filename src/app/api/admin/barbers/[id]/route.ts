@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { BookingStatus } from "@prisma/client";
+import { BookingStatus, Prisma } from "@prisma/client";
+import bcrypt from "bcryptjs";
 
 async function requireAdmin() {
   const session = await auth();
@@ -21,17 +22,82 @@ export async function PATCH(
 
   const { id } = await params;
   const body = await req.json();
-  const { isActive } = body;
 
-  if (typeof isActive !== "boolean") {
-    return NextResponse.json({ error: "isActive debe ser boolean" }, { status: 400 });
+  // Toggle isActive (existing behavior)
+  if ("isActive" in body) {
+    const { isActive } = body;
+    if (typeof isActive !== "boolean") {
+      return NextResponse.json({ error: "isActive debe ser boolean" }, { status: 400 });
+    }
+    const barber = await prisma.barber.findUnique({ where: { id }, select: { id: true } });
+    if (!barber) return NextResponse.json({ error: "No encontrado" }, { status: 404 });
+    const updated = await prisma.barber.update({ where: { id }, data: { isActive } });
+    return NextResponse.json({ id: updated.id, isActive: updated.isActive });
   }
 
-  const barber = await prisma.barber.findUnique({ where: { id }, select: { id: true } });
+  // Profile edit
+  const { name, email, password, role, bio } = body;
+
+  if (!name || !email) {
+    return NextResponse.json({ error: "Nombre y email son requeridos" }, { status: 400 });
+  }
+
+  const barber = await prisma.barber.findUnique({
+    where: { id },
+    select: { id: true, userId: true },
+  });
   if (!barber) return NextResponse.json({ error: "No encontrado" }, { status: 404 });
 
-  const updated = await prisma.barber.update({ where: { id }, data: { isActive } });
-  return NextResponse.json({ id: updated.id, isActive: updated.isActive });
+  const userUpdate: Record<string, unknown> = {
+    name,
+    email,
+    role: role === "ADMIN" ? "ADMIN" : "BARBER",
+  };
+  if (typeof password === "string" && password.length > 0) {
+    if (password.length < 6) {
+      return NextResponse.json({ error: "La contraseña debe tener al menos 6 caracteres" }, { status: 400 });
+    }
+    userUpdate.passwordHash = await bcrypt.hash(password, 10);
+  }
+
+  try {
+    const [, updated] = await prisma.$transaction([
+      prisma.user.update({ where: { id: barber.userId }, data: userUpdate }),
+      prisma.barber.update({
+        where: { id },
+        data: { displayName: name, bio: bio || null },
+        select: {
+          id: true,
+          displayName: true,
+          isActive: true,
+          depositPercentage: true,
+          transferAlias: true,
+          transferHolderName: true,
+          transferCBUorCVU: true,
+          bio: true,
+          user: { select: { email: true, role: true } },
+        },
+      }),
+    ]);
+
+    return NextResponse.json({
+      id: updated.id,
+      displayName: updated.displayName,
+      isActive: updated.isActive,
+      depositPercentage: updated.depositPercentage,
+      transferAlias: updated.transferAlias,
+      transferHolderName: updated.transferHolderName,
+      transferCBUorCVU: updated.transferCBUorCVU,
+      bio: updated.bio,
+      email: updated.user.email,
+      role: updated.user.role,
+    });
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2002") {
+      return NextResponse.json({ error: "Ya existe un usuario con ese email" }, { status: 409 });
+    }
+    throw err;
+  }
 }
 
 export async function DELETE(

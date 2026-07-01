@@ -40,6 +40,9 @@ export type AdminBarberItem = {
   transferAlias: string | null;
   transferHolderName: string | null;
   transferCBUorCVU: string | null;
+  email: string;
+  role: string;
+  bio: string | null;
 };
 
 export type AdminSettings = {
