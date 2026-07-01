@@ -1,7 +1,7 @@
 export function WebFooter() {
   return (
     <footer className="bg-zinc-950 text-white">
-      <div className="max-w-6xl mx-auto px-6 py-16 grid grid-cols-1 md:grid-cols-3 gap-12">
+      <div className="max-w-6xl mx-auto px-6 py-12 md:py-16 grid grid-cols-1 md:grid-cols-3 gap-8">
 
         {/* Opening Hours */}
         <div className="flex flex-col gap-4">

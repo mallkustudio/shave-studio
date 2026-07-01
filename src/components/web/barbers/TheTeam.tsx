@@ -4,12 +4,14 @@ const BARBERS = [
     specialty: "ESPECIALISTA EN CORTE",
     description:
       "Barbero con años de experiencia, especializado en cortes modernos y clásicos.",
+    photo: "/barbers/amado.jpg",
   },
   {
     name: "LUCAS FRENCHI",
     specialty: "ESPECIALISTA EN BARBA",
     description:
       "Apasionado por el detalle, experto en arreglo y perfilado de barba.",
+    photo: "/barbers/lucas.jpg",
   },
 ];
 
@@ -35,10 +37,15 @@ export function TheTeam() {
         </div>
 
         {/* Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-10 max-w-2xl">
-          {BARBERS.map(({ name, specialty, description }) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-3xl mx-auto w-full">
+          {BARBERS.map(({ name, specialty, description, photo }) => (
             <div key={name} className="flex flex-col gap-4">
-              <div className="bg-zinc-800 w-full aspect-[3/4]" />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={photo}
+                alt={name}
+                className="w-full aspect-[3/4] object-cover object-center"
+              />
               <div className="flex flex-col gap-1 pb-5 border-b border-zinc-700">
                 <p className="text-[var(--color-accent)] text-[10px] tracking-widest uppercase font-semibold">
                   {specialty}

@@ -12,7 +12,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
         style={{ backgroundColor: "rgba(10,10,10,0.85)", zIndex: -10 }}
       />
 
-      <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-5">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-black/90 flex items-center justify-between px-8 py-5">
         <Link href="/" className="text-white tracking-widest text-xs uppercase">
           SHAVE STUDIO
         </Link>

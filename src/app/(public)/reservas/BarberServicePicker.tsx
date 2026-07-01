@@ -40,7 +40,6 @@ export function BarberServicePicker({ barbers, initialBarberId = null, initialSe
 
         {/* Header */}
         <div className="text-center">
-          <p className="text-[#e63946] text-xs uppercase tracking-widest mb-2">SHAVE STUDIO</p>
           <h1 className="text-3xl font-black tracking-widest uppercase">Reserva tu turno</h1>
           <p className="text-zinc-400 text-sm mt-1 tracking-wide">
             {step === "selection" && "Elige tu barbero y el servicio"}

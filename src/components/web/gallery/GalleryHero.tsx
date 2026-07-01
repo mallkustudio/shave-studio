@@ -4,7 +4,7 @@ export function GalleryHero() {
 
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src="/pricing-bg.jpg"
+        src="/gallery-bg.jpg"
         alt=""
         aria-hidden="true"
         className="absolute inset-0 w-full h-full object-cover object-center"

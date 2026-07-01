@@ -20,7 +20,7 @@ export function PricingSection() {
       />
 
       {/* Overlay — tinte más rojizo */}
-      <div className="absolute inset-0" style={{ backgroundColor: "rgba(10, 10, 10, 0.68)" }} />
+      <div className="absolute inset-0" style={{ backgroundColor: "rgba(10, 10, 10, 0.55)" }} />
 
       {/* Content — left ~55% */}
       <div className="relative z-10 w-full py-24 px-[10%]">

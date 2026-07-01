@@ -26,13 +26,13 @@ export function AboutServices() {
           <img
             src="/services-bg.jpg"
             alt="Barbero en acción"
-            className="w-full h-48 object-cover object-center"
+            className="w-full h-72 object-cover object-center"
           />
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/pricing-bg.jpg"
             alt="Afeitado con navaja"
-            className="w-full h-48 object-cover object-center"
+            className="w-full h-72 object-cover object-center"
           />
         </div>
 

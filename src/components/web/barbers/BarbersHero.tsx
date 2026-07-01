@@ -4,7 +4,7 @@ export function BarbersHero() {
 
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src="/services-bg.jpg"
+        src="/barbers-bg.jpg"
         alt=""
         aria-hidden="true"
         className="absolute inset-0 w-full h-full object-cover object-center"
@@ -14,13 +14,13 @@ export function BarbersHero() {
 
       <div className="relative z-10 w-full px-[10%] pb-16 flex flex-col gap-3">
         <p className="text-zinc-400 text-xs tracking-[0.3em] uppercase">
-          — BARBEROS ALTAMENTE CALIFICADOS
+          — CONOCÉ A NUESTRO EQUIPO
         </p>
         <h1
           className="font-black uppercase text-white"
           style={{ fontSize: "clamp(3.5rem, 8vw, 8rem)", lineHeight: 0.9 }}
         >
-          BARBERS
+          THE TEAM
         </h1>
       </div>
 
