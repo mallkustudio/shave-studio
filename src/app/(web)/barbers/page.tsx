@@ -1,11 +1,13 @@
 import { BarbersHero } from "@/components/web/barbers/BarbersHero";
 import { TheTeam } from "@/components/web/barbers/TheTeam";
+import { getPublicBarbers } from "@/modules/barbers/queries";
 
-export default function BarbersPage() {
+export default async function BarbersPage() {
+  const barbers = await getPublicBarbers();
   return (
     <main>
       <BarbersHero />
-      <TheTeam />
+      <TheTeam barbers={barbers} />
     </main>
   );
 }

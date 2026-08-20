@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AnimatedLine } from "../AnimatedLine";
 
 const SERVICES = [
   {
@@ -38,11 +39,11 @@ export function AboutServices() {
 
         {/* Right column — content */}
         <div className="md:w-1/2 flex flex-col gap-7">
-          <div className="w-10 h-0.5 bg-[var(--color-accent)]" />
+          <AnimatedLine />
 
           <div className="flex flex-col gap-2">
             <h2
-              className="font-black uppercase text-white"
+              className="font-display font-black uppercase text-white"
               style={{ fontSize: "clamp(2rem, 3.5vw, 3.5rem)", lineHeight: 0.95 }}
             >
               SERVICIOS

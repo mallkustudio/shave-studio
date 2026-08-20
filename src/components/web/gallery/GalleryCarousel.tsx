@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { AnimatedLine } from "../AnimatedLine";
 
 interface GalleryCarouselProps {
   title: string;
@@ -31,7 +32,6 @@ export function GalleryCarousel({ title, subtitle, images }: GalleryCarouselProp
   const prev = () => setIndex((i) => (i - 1 + n) % n);
   const next = () => setIndex((i) => (i + 1) % n);
 
-  // Desktop: 3 visible (wrap around). Mobile: 1 visible.
   const visibleDesktop = [0, 1, 2].map((offset) => images[(index + offset) % n]);
   const visibleMobile = images[index];
 
@@ -50,9 +50,9 @@ export function GalleryCarousel({ title, subtitle, images }: GalleryCarouselProp
 
         {/* Header */}
         <div className="flex flex-col gap-3">
-          <div className="w-10 h-0.5 bg-[var(--color-accent)]" />
+          <AnimatedLine />
           <h2
-            className="font-black uppercase text-white"
+            className="font-display font-black uppercase text-white"
             style={{ fontSize: "clamp(2rem, 3.5vw, 3.5rem)", lineHeight: 0.95 }}
           >
             {title}

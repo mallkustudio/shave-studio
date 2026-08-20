@@ -1,4 +1,7 @@
 import Link from "next/link";
+import { FadeIn } from "./FadeIn";
+import { TextReveal } from "./TextReveal";
+import { AnimatedLine } from "./AnimatedLine";
 
 const SERVICES = [
   {
@@ -56,50 +59,51 @@ export function ServicesSection() {
       {/* Overlay */}
       <div className="absolute inset-0" style={{ backgroundColor: "rgba(10, 10, 10, 0.72)" }} />
 
-      {/* Content — left 60% */}
+      {/* Content */}
       <div className="relative z-10 w-full py-24 px-[10%]">
-        <div className="max-w-[600px] flex flex-col gap-8">
+        <FadeIn>
+          <div className="max-w-[600px] flex flex-col gap-8">
 
-          {/* Red separator */}
-          <div className="w-10 h-0.5 bg-[var(--color-accent)] -mt-4" />
+            <AnimatedLine className="-mt-4" />
 
-          {/* Title */}
-          <div className="flex flex-col gap-2">
-            <h2
-              className="font-black uppercase text-white"
-              style={{ fontSize: "clamp(2.5rem, 5vw, 5rem)", lineHeight: 0.95 }}
-            >
-              SERVICIOS
-            </h2>
-            <p className="text-zinc-400 text-xs tracking-[0.25em] uppercase">
-              — ORGULLO EN CADA SERVICIO
-            </p>
+            {/* Title */}
+            <div className="flex flex-col gap-2">
+              <h2
+                className="font-display font-black uppercase text-white"
+                style={{ fontSize: "clamp(2.5rem, 5vw, 5rem)", lineHeight: 0.95 }}
+              >
+                <TextReveal text="SERVICIOS" />
+              </h2>
+              <p className="text-zinc-400 text-xs tracking-[0.25em] uppercase">
+                — ORGULLO EN CADA SERVICIO
+              </p>
+            </div>
+
+            {/* Services list */}
+            <ul className="flex flex-col gap-6 mt-2">
+              {SERVICES.map(({ name, description, icon }) => (
+                <li key={name} className="flex items-start gap-4">
+                  <span className="mt-0.5 text-[var(--color-accent)] shrink-0">{icon}</span>
+                  <div className="flex flex-col gap-0.5">
+                    <p className="text-white text-sm font-bold tracking-widest uppercase">{name}</p>
+                    <p className="text-zinc-400 text-sm leading-relaxed">{description}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+
+            {/* CTA */}
+            <div className="mt-2">
+              <Link
+                href="/reservas"
+                className="inline-block border border-white text-white text-xs font-semibold tracking-widest uppercase px-8 py-3 transition-all duration-200 hover:bg-white hover:text-black"
+              >
+                RESERVAR UN TURNO
+              </Link>
+            </div>
+
           </div>
-
-          {/* Services list */}
-          <ul className="flex flex-col gap-6 mt-2">
-            {SERVICES.map(({ name, description, icon }) => (
-              <li key={name} className="flex items-start gap-4">
-                <span className="mt-0.5 text-[var(--color-accent)] shrink-0">{icon}</span>
-                <div className="flex flex-col gap-0.5">
-                  <p className="text-white text-sm font-bold tracking-widest uppercase">{name}</p>
-                  <p className="text-zinc-400 text-sm leading-relaxed">{description}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
-
-          {/* CTA */}
-          <div className="mt-2">
-            <Link
-              href="/reservas"
-              className="inline-block border border-white text-white text-xs font-semibold tracking-widest uppercase px-8 py-3 transition-all duration-200 hover:bg-white hover:text-black"
-            >
-              RESERVAR UN TURNO
-            </Link>
-          </div>
-
-        </div>
+        </FadeIn>
       </div>
     </section>
   );

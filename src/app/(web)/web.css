@@ -5,5 +5,14 @@
   --color-accent: #e63946;
   --color-bg: #0a0a0a;
   --color-text: #ffffff;
-  --font-heading: system-ui, sans-serif;
+  --font-heading: var(--font-bebas), system-ui, sans-serif;
+}
+
+.font-display {
+  font-family: var(--font-heading);
+  letter-spacing: 0.02em;
+}
+
+html {
+  scroll-behavior: smooth;
 }
